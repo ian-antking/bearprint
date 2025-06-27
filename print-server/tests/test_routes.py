@@ -1,4 +1,4 @@
-from app import create_app
+from print_server.app import create_app
 
 def test_index_route():
     app = create_app()
