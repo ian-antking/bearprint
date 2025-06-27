@@ -1,28 +1,39 @@
 import textwrap
 
 class Printer:
-    def __init__(self, device='/dev/usb/lp0', encoding='utf-8'):
+    def __init__(self, device='/dev/usb/lp0', encoding='cp437'):
         self.device = device
         self.encoding = encoding
-        self.line_width = 32
+        self.line_width = 64
 
     def _write(self, data: bytes):
         with open(self.device, 'wb') as printer:
             printer.write(data)
 
+    def _write_line(self, line: str):
+        self._write(line.encode(self.encoding, errors='replace') + b'\n')
+
     def text(self, message: str):
-      wrapped_lines = textwrap.wrap(message, self.line_width)
-      for line in wrapped_lines:
-          self._write(line.encode(self.encoding) + b'\n')
+        for raw_line in message.split('\n'):
+            wrapped_lines = textwrap.wrap(raw_line, self.line_width)
+            for line in wrapped_lines or ['']:
+                self._write_line(line)
 
     def blank_line(self, count=1):
         self._write(b'\n' * count)
 
     def cut(self):
+        self.blank_line(3)
         self._write(b'\x1D\x56\x00')
 
-    def print_text(self, message: str, blank_lines=6, cut_paper=True):
-        self.text(message)
-        self.blank_line(blank_lines)
-        if cut_paper:
-            self.cut()
+    def print_job(self, job):
+        for item in job:
+            type_ = item.get("type")
+            if type_ == "text":
+                self.text(item.get("content", ""))
+            elif type_ == "blank":
+                self.blank_line(item.get("count", 1))
+            elif type_ == "line":
+                self.text("-" * self.line_width)
+            elif type_ == "cut":
+                self.cut()

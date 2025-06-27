@@ -13,13 +13,18 @@ def create_app(config: dict = None) -> Flask:
     def index():
         return "Hello from BearPrint!"
 
-    @app.route("/print/text", methods=["POST"])
+    @app.route("/v1/print", methods=["POST"])
     def print_route():
-        data = request.json
-        text = data.get("text", "")
-        if not text:
-            return jsonify({"error": "No text provided"}), 400
-        printer.print_text(text)
-        return jsonify({"status": "printed"})
+        job = request.get_json()
+
+        if not isinstance(job, dict) or not isinstance(job.get("items"), list):
+            return jsonify({"error": "Expected JSON with an 'items' list"}), 400
+
+        try:
+            printer = Printer()
+            printer.print_job(job["items"])
+            return jsonify({"status": "printed"})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
     return app
