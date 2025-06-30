@@ -1,7 +1,7 @@
 .PHONY: deploy install run dev
 
 deploy:
-	rsync -avz --delete ./ $(USER)@$(HOST):~/print-server/
+	rsync -avz --delete --rsync-path="sudo rsync" ./ $(USER)@$(HOST):/opt/print-server/
 
 install:
 	./scripts/install.sh

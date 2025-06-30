@@ -1,0 +1,16 @@
+[Unit]
+Description=BearPrint print server
+After=network.target
+
+[Service]
+Type=simple
+User=ian
+WorkingDirectory=/opt/print-server
+Environment=PYTHONPATH=/opt/print-server/src
+ExecStart=/usr/bin/gunicorn -c /opt/print-server/gunicorn.conf.py print_server.app:create_app()
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
