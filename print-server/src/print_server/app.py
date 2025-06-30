@@ -21,7 +21,6 @@ def create_app(config: dict = None) -> Flask:
             return jsonify({"error": "Expected JSON with an 'items' list"}), 400
 
         try:
-            printer = Printer()
             printer.print_job(job["items"])
             return jsonify({"status": "printed"})
         except Exception as e:
