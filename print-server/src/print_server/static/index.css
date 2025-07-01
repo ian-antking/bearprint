@@ -6,13 +6,13 @@ body {
   margin: 2rem auto;
   padding: 1rem 2rem;
   line-height: 1.6;
-  color: #333;
-  background-color: #f9f9f9;
+  color: #f8f8f2; /* light text */
+  background-color: #282a36; /* Dracula background */
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
-  color: #222;
+  color: #f8f8f2; /* light heading */
   margin-top: 2rem;
   margin-bottom: 1rem;
   line-height: 1.25;
@@ -20,10 +20,11 @@ h1, h2, h3, h4, h5, h6 {
 
 p {
   margin-bottom: 1rem;
+  color: #f8f8f2;
 }
 
 a {
-  color: #0366d6;
+  color: #6272a4; /* Dracula purple */
   text-decoration: none;
 }
 
@@ -34,26 +35,31 @@ a:hover {
 ul, ol {
   margin-left: 1.5rem;
   margin-bottom: 1rem;
+  color: #f8f8f2;
 }
 
 blockquote {
-  border-left: 4px solid #ddd;
+  border-left: 4px solid #44475a; /* darker purple-gray */
   margin-left: 0;
   margin-right: 0;
   padding-left: 1rem;
-  color: #666;
+  color: #bd93f9; /* lighter purple */
   font-style: italic;
+  background-color: #373844; /* subtle background */
+  border-radius: 4px;
 }
 
 hr {
   border: none;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #44475a;
   margin: 2rem 0;
 }
 
 img {
   max-width: 100%;
   height: auto;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(98, 114, 164, 0.5);
 }
 
 /* Tables */
@@ -62,44 +68,45 @@ table {
   width: 100%;
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.7);
   border-radius: 6px;
   overflow: hidden;
-  background-color: white;
-  border: 1px solid #ddd;
+  background-color: #44475a;
+  border: 1px solid #6272a4;
+  color: #f8f8f2;
 }
 
 th, td {
-  border: 1px solid #ddd;
+  border: 1px solid #6272a4;
   padding: 0.75rem 1rem;
   text-align: left;
   vertical-align: top;
 }
 
 th {
-  background-color: #f5f7fa;
+  background-color: #6272a4;
   font-weight: 600;
-  color: #222;
+  color: #f8f8f2;
 }
 
 tbody tr:nth-child(even) {
-  background-color: #fafafa;
+  background-color: #3b3f58;
 }
 
 /* Inline code */
 code {
-  background-color: #eee;
+  background-color: #44475a;
   padding: 0.2em 0.4em;
   border-radius: 4px;
   font-family: 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
   font-size: 0.95em;
-  color: #c7254e;
-  border: 1px solid #ddd;
+  color: #ff79c6;
+  border: 1px solid #6272a4;
 }
 
 /* Code blocks */
 pre {
-  background-color: #2d2d2d;
+  background-color: #282a36;
   color: #f8f8f2;
   padding: 1rem 1.25rem;
   border-radius: 8px;
@@ -108,8 +115,8 @@ pre {
   font-size: 0.9rem;
   line-height: 1.4;
   margin-bottom: 1.5rem;
-  box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-  border: 1px solid #444;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+  border: 1px solid #6272a4;
   white-space: pre-wrap; /* wrap long lines */
 }
 
@@ -132,11 +139,11 @@ pre > code {
 
 /* Curl command block: monospace, subtle highlight */
 pre.curl-command {
-  background-color: #1e1e1e;
-  color: #61dafb;
+  background-color: #44475a;
+  color: #8be9fd;
   padding: 1rem 1.5rem;
   border-radius: 8px;
-  border: 1px solid #444;
+  border: 1px solid #6272a4;
   font-family: 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
   font-size: 0.95rem;
   overflow-x: auto;
