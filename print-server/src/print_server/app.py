@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify
-from markupsafe import Markup
+from flask import Flask, request, jsonify, render_template, url_for
 import markdown
 from pathlib import Path
 from .printer import Printer
@@ -19,10 +18,23 @@ def create_app(config: dict = None) -> Flask:
             return "Documentation not found", 404
 
         md_content = md_path.read_text(encoding="utf-8")
-        html = markdown.markdown(md_content)
-        return f"<html><body>{Markup(html)}</body></html>", 200
+        html_body = markdown.markdown(
+            md_content,
+            extensions=['tables', 'fenced_code', 'codehilite'],
+            extension_configs={
+                'codehilite': {
+                    'linenums': False,
+                    'guess_lang': True
+                }
+            }
+        )
 
-    @app.route("/v1/print", methods=["POST"])
+        return render_template(
+            "index.html",
+            content=html_body,
+        )
+
+    @app.route("/api/v1/print", methods=["POST"])
     def __():
         job = request.get_json()
 

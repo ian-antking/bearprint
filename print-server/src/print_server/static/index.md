@@ -1,6 +1,6 @@
 # ʕ•ᴥ•ʔ BearPrint API
 
-## POST /v1/print
+## POST /api/v1/print
 
 Send a JSON object with an `items` array describing the print job. Each item is an object with a `"type"` field and optional other fields depending on the type.
 
@@ -48,6 +48,7 @@ curl -X POST -H "Content-Type: application/json" \
     http://localhost:5000/v1/print
 Response
 200 OK
+```
 
 ```json
 { "status": "printed" }
