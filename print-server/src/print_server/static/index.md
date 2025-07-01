@@ -9,7 +9,7 @@ Send a JSON object with an `items` array describing the print job. Each item is 
 | Type     | Description                                      | Fields                                                                  | Example                                                     |
 |----------|--------------------------------------------------|-------------------------------------------------------------------------|-------------------------------------------------------------|
 | `text`   | Prints text, optionally aligned                  | `content` (string), `align` (optional: `"left"`, `"center"`, `"right"`) | `{ "type": "text", "content": "Hello", "align": "center" }` |
-| `qrcode` | Prints a QR code                                 | `content` (string)                                                      | `{ "type": "qrcode", "content": "https://example.com" }`    |
+| `qrcode` | Prints a QR code                                 | `content` (string)  `align` (optional: `"left"`, `"center"`, `"right"`) | `{ "type": "qrcode", "content": "https://example.com" }`    |
 | `blank`  | Prints blank lines                               | `count` (optional, integer, default 1)                                  | `{ "type": "blank", "count": 3 }`                           |
 | `line`   | Prints a horizontal line (dashes)                | None                                                                    | `{ "type": "line" }`                                        |
 | `cut`    | Cuts the paper                                   | None                                                                    | `{ "type": "cut" }`                                         |

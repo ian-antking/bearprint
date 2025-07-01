@@ -34,20 +34,29 @@ class Printer:
         self.blank_line(6)
         self._write(b'\x1D\x56\x00')
         
-    def _print_qrcode(self, data: str):
+    def _print_qrcode(self, data: str, align: str = "left"):
+        align_map = {
+            "left": 0,
+            "center": 1,
+            "right": 2
+        }
+        align_val = align_map.get(align, 0)
+        align_cmd = b'\x1b\x61' + bytes([align_val])
+
         qr_data = data.encode('utf-8')
         length = len(qr_data) + 3
         len_low = length & 0xFF
         len_high = (length >> 8) & 0xFF
 
         cmds = bytearray()
+        cmds += align_cmd
         cmds += b'\x1d\x28\x6b\x04\x00\x31\x41\x32\x00'
         cmds += b'\x1d\x28\x6b\x03\x00\x31\x43\x06'
         cmds += b'\x1d\x28\x6b\x03\x00\x31\x45\x30'
         cmds += b'\x1d\x28\x6b' + bytes([len_low, len_high]) + b'\x31\x50\x30' + qr_data
         cmds += b'\x1d\x28\x6b\x03\x00\x31\x51\x30'
         cmds += b'\n'
-        
+
         self._write(cmds)
 
     def print_job(self, job):
@@ -62,4 +71,4 @@ class Printer:
             elif type_ == "cut":
                 self.cut()
             elif type_ == "qrcode":
-                self._print_qrcode(item.get("content", ""))
+                self._print_qrcode(item.get("content", ""),align=item.get("align", "left"))
