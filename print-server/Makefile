@@ -6,6 +6,9 @@ deploy:
 install:
 	./scripts/install.sh
 
+update: deploy
+	ssh $(USER)@$(HOST) 'sudo systemctl restart bearprint.service'
+
 run:
 	PYTHONPATH=src gunicorn -c gunicorn.conf.py 'print_server.app:create_app()'
 

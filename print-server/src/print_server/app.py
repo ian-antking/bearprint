@@ -1,4 +1,7 @@
 from flask import Flask, request, jsonify
+from markupsafe import Markup
+import markdown
+from pathlib import Path
 from .printer import Printer
 
 def create_app(config: dict = None) -> Flask:
@@ -10,11 +13,17 @@ def create_app(config: dict = None) -> Flask:
     printer = Printer()
 
     @app.route("/")
-    def index():
-        return "Hello from BearPrint!"
+    def _():
+        md_path = Path(__file__).parent / "static" / "index.md"
+        if not md_path.exists():
+            return "Documentation not found", 404
+
+        md_content = md_path.read_text(encoding="utf-8")
+        html = markdown.markdown(md_content)
+        return f"<html><body>{Markup(html)}</body></html>", 200
 
     @app.route("/v1/print", methods=["POST"])
-    def print_route():
+    def __():
         job = request.get_json()
 
         if not isinstance(job, dict) or not isinstance(job.get("items"), list):
@@ -27,3 +36,5 @@ def create_app(config: dict = None) -> Flask:
             return jsonify({"error": str(e)}), 500
 
     return app
+
+app = create_app()

@@ -33,6 +33,22 @@ class Printer:
     def cut(self):
         self.blank_line(6)
         self._write(b'\x1D\x56\x00')
+        
+    def _print_qrcode(self, data: str):
+        qr_data = data.encode('utf-8')
+        length = len(qr_data) + 3
+        len_low = length & 0xFF
+        len_high = (length >> 8) & 0xFF
+
+        cmds = bytearray()
+        cmds += b'\x1d\x28\x6b\x04\x00\x31\x41\x32\x00'
+        cmds += b'\x1d\x28\x6b\x03\x00\x31\x43\x06'
+        cmds += b'\x1d\x28\x6b\x03\x00\x31\x45\x30'
+        cmds += b'\x1d\x28\x6b' + bytes([len_low, len_high]) + b'\x31\x50\x30' + qr_data
+        cmds += b'\x1d\x28\x6b\x03\x00\x31\x51\x30'
+        cmds += b'\n'
+        
+        self._write(cmds)
 
     def print_job(self, job):
         for item in job:
@@ -45,3 +61,5 @@ class Printer:
                 self.text("-" * self.line_width)
             elif type_ == "cut":
                 self.cut()
+            elif type_ == "qrcode":
+                self._print_qrcode(item.get("content", ""))

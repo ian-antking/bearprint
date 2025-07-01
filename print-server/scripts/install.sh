@@ -2,18 +2,16 @@
 
 set -e
 
-# Install system-wide gunicorn if not already installed
-if ! command -v gunicorn >/dev/null 2>&1; then
-    echo "Installing gunicorn system-wide..."
-    sudo apt update
-    sudo apt install gunicorn -y
-fi
+echo "Installing gunicorn system-wide..."
+sudo apt update
+sudo apt upgrade -y
+sudo apt install gunicorn -y
 
-# Install Python dependencies locally (still useful)
+echo "Installing python dependencies..."
 python3 -m pip install --break-system-packages --upgrade pip
 python3 -m pip install --break-system-packages -r requirements.txt
 
-# Set printer permissions
+echo "Setting printer permissions..."
 device_group=$(stat -c '%G' /dev/usb/lp0)
 if ! groups $USER | grep -qw "$device_group"; then
     sudo usermod -aG "$device_group" "$USER"
@@ -28,10 +26,10 @@ EOF
 sudo udevadm control --reload-rules
 sudo udevadm trigger
 
-# Install systemd system service (adjust path to service file if needed)
+echo "Setting up service..."
 sudo cp bearprint.service /etc/systemd/system/bearprint.service
 
-# Reload systemd, enable and start service
+echo "Reloading service..."
 sudo systemctl daemon-reload
 sudo systemctl enable bearprint.service
 sudo systemctl restart bearprint.service
