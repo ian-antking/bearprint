@@ -7,9 +7,6 @@ BearPrint is a tiny, networked thermal printer stack — perfect for receipts, n
 - 📜 Simple Python script to send text to a thermal printer
 - 🌐 Flask-based API to expose printing over your local network
 - 🧾 CLI tool (`cat something.txt | thermal-print`) to send jobs from any device
-- ⚛️ Preact frontend for formatting and sending print jobs
-- 🔐 Planned authentication & OAuth support
-- 📦 Monorepo layout for easy management
 
 ## 🧱 Architecture
 
