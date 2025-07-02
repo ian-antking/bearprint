@@ -8,9 +8,11 @@ import (
 	"gopkg.in/ini.v1"
 )
 
+var OsUserHomeDir = os.UserHomeDir
+
 type Config struct {
-    ServerHost string
-		ServerPort string
+	ServerHost string
+	ServerPort string
 }
 
 func NewConfig(hostFlag, portFlag string) (Config, error) {
@@ -20,7 +22,7 @@ func NewConfig(hostFlag, portFlag string) (Config, error) {
 	}
 
 	if cfg.ServerHost == "" || cfg.ServerPort == "" {
-		home, err := os.UserHomeDir()
+		home, err := OsUserHomeDir()
 		if err != nil {
 			return Config{}, fmt.Errorf("cannot find home directory: %w", err)
 		}
