@@ -1,4 +1,4 @@
-# ʕ•ᴥ•ʔ BearPrint API
+# ʕ•ᴥ•ʔ BearPrint Server
 
 ## POST /api/v1/print
 

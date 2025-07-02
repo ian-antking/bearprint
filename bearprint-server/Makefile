@@ -1,7 +1,7 @@
 .PHONY: deploy install run dev
 
 deploy:
-	rsync -avz --delete --rsync-path="sudo rsync" ./ $(USER)@$(HOST):/opt/print-server/
+	rsync -avz --delete --rsync-path="sudo rsync" ./ $(USER)@$(HOST):/opt/bearprint-server/
 
 install:
 	./scripts/install.sh
