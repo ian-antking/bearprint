@@ -7,7 +7,37 @@ import (
 	"net/http"
 	"os"
 	"bufio"
+	"path/filepath"
+
+	"gopkg.in/ini.v1"
 )
+
+type Config struct {
+    ServerURL string
+}
+
+func loadConfig() (Config, error) {
+    var cfg Config
+
+    home, err := os.UserHomeDir()
+    if err != nil {
+        return cfg, fmt.Errorf("cannot find home directory: %w", err)
+    }
+
+    configPath := filepath.Join(home, ".bearprint", "config")
+
+    iniFile, err := ini.Load(configPath)
+    if err != nil {
+        return cfg, fmt.Errorf("failed to load config file: %w", err)
+    }
+
+    cfg.ServerURL = iniFile.Section("default").Key("server_url").String()
+    if cfg.ServerURL == "" {
+        return cfg, fmt.Errorf("server_url not found in config file")
+    }
+
+    return cfg, nil
+}
 
 type PrintItem struct {
 	Type    string `json:"type"`
@@ -21,6 +51,14 @@ type PrintRequest struct {
 }
 
 func main() {
+	cfg, err := loadConfig()
+	if err != nil {
+			fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
+			os.Exit(1)
+	}
+
+	url := cfg.ServerURL + "/api/v1/print"
+	
 	scanner := bufio.NewScanner(os.Stdin)
 
 	printReq := PrintRequest{
@@ -44,7 +82,6 @@ for scanner.Scan() {
 		os.Exit(1)
 	}
 
-	url := "http://192.168.0.191:8080/api/v1/print"
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(data))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to send request: %v\n", err)
