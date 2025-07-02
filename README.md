@@ -1,20 +1,51 @@
-# 🐻 BearPrint
+# ʕ•ᴥ•ʔ BearPrint
 
-BearPrint is a tiny, networked thermal printer stack — perfect for receipts, notes, or weird little projects. Built to run on a Raspberry Pi and scale with a UI in a k3s cluster.
+BearPrint is a tiny, networked thermal printer stack — perfect for receipts, notes, or weird little projects. Built to run on a Raspberry Pi zero.
 
 ## ✨ Features
 
-- 📜 Simple Python script to send text to a thermal printer
 - 🌐 Flask-based API to expose printing over your local network
-- 🧾 CLI tool (`cat something.txt | bearprint`) to send jobs from any device
+- 🧾 CLI tool (`cat something.txt | bearprint`) to send jobs within your network
 
 ## 🚀 Getting Started
 
 ### Requirements
 
-- Raspberry Pi Zero (or similar) with USB thermal printer
+- Raspberry Pi Zero (or similar) with USB thermal printer (I'm using an Xprinter 80T)
 - Python 3.9+
 - `sudo` access to `/dev/usb/lp0` or equivalent
+
+### Quickstart (Server)
+
+#### 1. Clone the Repository Locally
+
+Get the project files on your local development machine.
+
+```bash
+git clone https://github.com/ian-antking/bear-print.git)
+cd bear-print/bearprint-server
+```
+
+#### 2. Deploy Files to the Pi
+
+From your local machine, run the following command. This will sync the project files to `/opt/bearprint-server/` on the Raspberry Pi.
+
+```bash
+make deploy USER=your_pi_user HOST=your_pi_ip
+```
+
+#### 3. Install Dependencies on the Pi
+
+SSH into your Raspberry Pi and run the `install` command from the deployment directory. This will install the necessary Python packages and set up the systemd service.
+
+```bash
+# SSH into the Pi
+ssh your_pi_user@your_pi_ip
+
+# Navigate to the directory and run install
+cd /opt/bearprint-server
+sudo make install
+```
 
 ### Installation (CLI Tool)
 
@@ -26,20 +57,6 @@ curl -sSL https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/
 
 > **Note**: On macOS, you may need to manually approve the binary after installation. Navigate to `~/.local/bin` in Finder, right-click `bearprint`, and select "Open". Or run `xattr -d com.apple.quarantine ~/.local/bin/bearprint
 `
-
-### Quickstart (Server)
-
-```bash
-# Clone the repo
-git clone [https://github.com/ian-antking/bear-print.git](https://github.com/ian-antking/bear-print.git)
-cd bear-print/bearprint-server
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the server
-make dev
-```
 
 ### Print a test message
 
