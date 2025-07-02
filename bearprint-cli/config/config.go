@@ -13,29 +13,38 @@ type Config struct {
 		ServerPort string
 }
 
-func NewConfig() (Config, error) {
-    home, err := os.UserHomeDir()
-    if err != nil {
-        return Config{}, fmt.Errorf("cannot find home directory: %w", err)
-    }
+func NewConfig(hostFlag, portFlag string) (Config, error) {
+	cfg := Config{
+		ServerHost: hostFlag,
+		ServerPort: portFlag,
+	}
 
-    configPath := filepath.Join(home, ".bearprint", "config")
-    iniFile, err := ini.Load(configPath)
-    if err != nil {
-        return Config{}, fmt.Errorf("failed to load config file: %w", err)
-    }
+	if cfg.ServerHost == "" || cfg.ServerPort == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return Config{}, fmt.Errorf("cannot find home directory: %w", err)
+		}
 
-    host := iniFile.Section("default").Key("server_host").String()
-    port := iniFile.Section("default").Key("server_port").String()
+		configPath := filepath.Join(home, ".bearprint", "config")
+		iniFile, err := ini.Load(configPath)
+		if err != nil {
+			if cfg.ServerHost != "" && cfg.ServerPort != "" {
+				return cfg, nil
+			}
+			return Config{}, fmt.Errorf("failed to load config file at %s: %w", configPath, err)
+		}
 
-    if host == "" || port == "" {
-        return Config{}, fmt.Errorf("missing server_host or server_port in config")
-    }
+		if cfg.ServerHost == "" {
+			cfg.ServerHost = iniFile.Section("default").Key("server_host").String()
+		}
+		if cfg.ServerPort == "" {
+			cfg.ServerPort = iniFile.Section("default").Key("server_port").String()
+		}
+	}
 
-    cfg := Config{
-        ServerHost: host,
-        ServerPort: port,
-    }
+	if cfg.ServerHost == "" || cfg.ServerPort == "" {
+		return Config{}, fmt.Errorf("missing configuration: please provide flags (-host, -port) or a config file")
+	}
 
-    return cfg, nil
+	return cfg, nil
 }
