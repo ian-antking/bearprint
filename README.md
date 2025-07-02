@@ -58,6 +58,26 @@ curl -sSL https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/
 > **Note**: On macOS, you may need to manually approve the binary after installation. Navigate to `~/.local/bin` in Finder, right-click `bearprint`, and select "Open". Or run `xattr -d com.apple.quarantine ~/.local/bin/bearprint
 `
 
+#### Configuration
+
+After installing, you must create a configuration file for the CLI tool to specify the server's address.
+
+1. Create the directory:
+
+  ```bash
+  mkdir -p ~/.bearprint
+  ```
+
+1. Create a file named `~/.bearprint/config` with the following content:
+
+  ```ini
+  [default]
+  server_host = your_pi_ip
+  server_port = 8080
+  ```
+
+  Replace `your_pi_ip` with the IP address of your Raspberry Pi.
+
 ### Print a test message
 
 Using the CLI:
