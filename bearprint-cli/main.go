@@ -8,32 +8,38 @@ import (
 	"os"
 	"bufio"
 	"path/filepath"
+	"net/url"
 
 	"gopkg.in/ini.v1"
 )
 
 type Config struct {
-    ServerURL string
+    ServerHost string
+		ServerPort string
 }
 
-func loadConfig() (Config, error) {
-    var cfg Config
-
+func NewConfig() (Config, error) {
     home, err := os.UserHomeDir()
     if err != nil {
-        return cfg, fmt.Errorf("cannot find home directory: %w", err)
+        return Config{}, fmt.Errorf("cannot find home directory: %w", err)
     }
 
     configPath := filepath.Join(home, ".bearprint", "config")
-
     iniFile, err := ini.Load(configPath)
     if err != nil {
-        return cfg, fmt.Errorf("failed to load config file: %w", err)
+        return Config{}, fmt.Errorf("failed to load config file: %w", err)
     }
 
-    cfg.ServerURL = iniFile.Section("default").Key("server_url").String()
-    if cfg.ServerURL == "" {
-        return cfg, fmt.Errorf("server_url not found in config file")
+    host := iniFile.Section("default").Key("server_host").String()
+    port := iniFile.Section("default").Key("server_port").String()
+
+    if host == "" || port == "" {
+        return Config{}, fmt.Errorf("missing server_host or server_port in config")
+    }
+
+    cfg := Config{
+        ServerHost: host,
+        ServerPort: port,
     }
 
     return cfg, nil
@@ -51,13 +57,17 @@ type PrintRequest struct {
 }
 
 func main() {
-	cfg, err := loadConfig()
+	cfg, err := NewConfig()
 	if err != nil {
 			fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
 			os.Exit(1)
 	}
 
-	url := cfg.ServerURL + "/api/v1/print"
+	url := url.URL{
+		Scheme: "http",
+		Host:   fmt.Sprintf("%s:%s", cfg.ServerHost, cfg.ServerPort),
+		Path:   "/api/v1/print",
+  }
 	
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -82,7 +92,7 @@ for scanner.Scan() {
 		os.Exit(1)
 	}
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(data))
+	resp, err := http.Post(url.String(), "application/json", bytes.NewBuffer(data))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to send request: %v\n", err)
 		os.Exit(1)
