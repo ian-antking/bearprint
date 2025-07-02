@@ -19,7 +19,7 @@ func main() {
 	q_flag := flag.Bool("q", false, "Treat input as a single QR code")
 	qrcode_flag := flag.Bool("qrcode", false, "Treat input as a single QR code")
 	flag.Parse()
-	
+
 	cfg, err := config.NewConfig(*host, *port)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
@@ -42,7 +42,7 @@ func main() {
 			items = append(items, printer.PrintItem{
 				Type:    printer.QRCode,
 				Content: content,
-				Align: printer.AlignCenter,
+				Align:   printer.AlignCenter,
 			})
 		}
 	} else {

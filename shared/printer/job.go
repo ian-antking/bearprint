@@ -3,7 +3,7 @@ package printer
 type ItemType string
 
 const (
-	Text       ItemType = "text"
+	Text   ItemType = "text"
 	QRCode ItemType = "qrcode"
 	Blank  ItemType = "blank"
 	Line   ItemType = "line"
