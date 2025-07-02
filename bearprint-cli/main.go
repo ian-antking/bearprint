@@ -9,7 +9,8 @@ import (
 	"strings"
 
 	"github.com/ian-antking/bear-print/bearprint-cli/config"
-	"github.com/ian-antking/bear-print/bearprint-cli/printer"
+	"github.com/ian-antking/bear-print/bearprint-cli/printservice"
+	"github.com/ian-antking/bear-print/shared/printer"
 )
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	printerClient := printer.NewClient(cfg.ServerHost, cfg.ServerPort)
+	printerClient := printservice.NewClient(cfg.ServerHost, cfg.ServerPort)
 
 	var items []printer.PrintItem
 
