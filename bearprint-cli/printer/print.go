@@ -8,11 +8,29 @@ import (
 	"net/url"
 )
 
+type ItemType string
+
+const (
+	Text       ItemType = "text"
+	QRCode ItemType = "qrcode"
+	Blank  ItemType = "blank"
+	Line   ItemType = "line"
+	Cut    ItemType = "cut"
+)
+
+type Alignment string
+
+const (
+	AlignLeft   Alignment = "left"
+	AlignCenter Alignment = "center"
+	AlignRight  Alignment = "right"
+)
+
 type PrintItem struct {
-	Type    string `json:"type"`
-	Content string `json:"content,omitempty"`
-	Align   string `json:"align,omitempty"`
-	Count   int    `json:"count,omitempty"`
+	Type    ItemType  `json:"type"`
+	Content string    `json:"content,omitempty"`
+	Align   Alignment `json:"align,omitempty"`
+	Count   int       `json:"count,omitempty"`
 }
 
 type PrintRequest struct {
@@ -29,7 +47,7 @@ func NewClient(host, port string) *Client {
 		Scheme: "http",
 		Host:   fmt.Sprintf("%s:%s", host, port),
 		Path:   "/api/v1/print",
-  }
+	}
 
 	return &Client{
 		baseURL:    url.String(),
@@ -57,4 +75,3 @@ func (c *Client) Print(items []PrintItem) error {
 
 	return nil
 }
-

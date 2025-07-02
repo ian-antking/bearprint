@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"bufio"
 
 	"github.com/ian-antking/bear-print/bearprint-cli/config"
 	"github.com/ian-antking/bear-print/bearprint-cli/printer"
@@ -22,7 +22,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		items = append(items, printer.PrintItem{
-			Type:    "text",
+			Type:    printer.Text,
 			Content: scanner.Text(),
 		})
 	}
