@@ -13,4 +13,4 @@ run:
 	PYTHONPATH=src gunicorn -c gunicorn.conf.py 'print_server.app:create_app()'
 
 dev:
-	poetry run python -m print_server
+	 PYTHONPATH=src poetry run python -m bearprint_server

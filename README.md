@@ -39,35 +39,17 @@ cd bearprint/printer-server
 pip install -r requirements.txt
 
 # Run the server
-python app.py
+cd bearprint-server
+make dev
 ```
 
 ### Print a test message
 
 ```bash
-curl -X POST http://your-pi-ip:5000/v1/print/text \
+curl -X POST http://your-pi-ip:8080/api/v1/print/text \
   -H "Content-Type: application/json" \
   -d '{"text": "Hello from BearPrint!"}'
 ```
-
-## 🧪 Project Structure
-
-```text
-bearprint/
-├── printer-server/      # Flask API backend
-├── printer-ui/          # Preact frontend (WIP)
-├── cli-tool/            # Simple shell/Node-based CLI (WIP)
-├── shared/              # Shared constants/types
-└── README.md            # You're here!
-```
-
-## 💡 Future Ideas
-
-- `POST /v1/print/image`
-- `POST /v1/print/composite`
-- Authenticated dashboard with print history
-- QR code printing
-- Emoji/art templates
 
 ## 🐾 Logo
 
