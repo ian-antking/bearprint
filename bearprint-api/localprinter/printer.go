@@ -9,9 +9,9 @@ import (
 )
 
 type Printer struct {
-	encoding   string
-	lineWidth  int
-	writer     io.Writer
+	encoding  string
+	lineWidth int
+	writer    io.Writer
 }
 
 func NewPrinter(writer io.Writer) *Printer {
@@ -81,7 +81,6 @@ func (p *Printer) printQRCode(data string, align printer.Alignment) error {
 	cmds := buildQRCodeCmd(data, align, p.lineWidth)
 	return p.write(cmds)
 }
-
 
 func (p *Printer) PrintJob(items []printer.PrintItem) error {
 	for _, item := range items {

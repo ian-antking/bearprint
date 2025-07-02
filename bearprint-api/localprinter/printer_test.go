@@ -10,23 +10,28 @@ import (
 	"github.com/ian-antking/bear-print/shared/printer"
 )
 
-func TestPrinter_Text(t *testing.T) {
-	buf := &bytes.Buffer{}
-	p := localprinter.NewPrinter(buf)
-
-	err := p.Text("hello world", "left")
-	assert.NoError(t, err)
-
-	output := buf.String()
-
-	expected := "hello world" + strings.Repeat(" ", 64-len("hello world")) + "\n"
-	assert.Equal(t, expected, output)
+type printerTest struct {
+	t   *testing.T
+	buf *bytes.Buffer
+	p   *localprinter.Printer
 }
 
-func TestPrinter_PrintJob(t *testing.T) {
+func newPrinterTest(t *testing.T) *printerTest {
 	buf := &bytes.Buffer{}
 	p := localprinter.NewPrinter(buf)
+	return &printerTest{t: t, buf: buf, p: p}
+}
 
+func (pt *printerTest) testText() {
+	err := pt.p.Text("hello world", "left")
+	assert.NoError(pt.t, err)
+
+	output := pt.buf.String()
+	expected := "hello world" + strings.Repeat(" ", 64-len("hello world")) + "\n"
+	assert.Equal(pt.t, expected, output)
+}
+
+func (pt *printerTest) testPrintJob() {
 	job := []printer.PrintItem{
 		{Type: "text", Content: "line1", Align: "left"},
 		{Type: "blank", Count: 1},
@@ -34,16 +39,25 @@ func TestPrinter_PrintJob(t *testing.T) {
 		{Type: "cut"},
 	}
 
-	err := p.PrintJob(job)
-	assert.NoError(t, err)
+	err := pt.p.PrintJob(job)
+	assert.NoError(pt.t, err)
 
-	output := buf.Bytes()
+	strOut := pt.buf.String()
 
-	strOut := string(output)
+	assert.Contains(pt.t, strOut, "line1")
+	assert.Contains(pt.t, strOut, "\n\n")
+	assert.Contains(pt.t, strOut, strings.Repeat("-", 64))
+	assert.Contains(pt.t, strOut, string([]byte{0x1D, 0x56, 0x00}))
+}
 
-	assert.Contains(t, strOut, "line1")
-	assert.Contains(t, strOut, "\n\n")
-	assert.Contains(t, strOut, strings.Repeat("-", 64))
+func TestPrinter(t *testing.T) {
+	pt := newPrinterTest(t)
 
-	assert.Contains(t, strOut, string([]byte{0x1D, 0x56, 0x00}))
+	t.Run("Text prints single line left aligned with padding", func(t *testing.T) {
+		pt.testText()
+	})
+
+	t.Run("PrintJob executes job with text, blank line, line, and cut commands", func(t *testing.T) {
+		pt.testPrintJob()
+	})
 }

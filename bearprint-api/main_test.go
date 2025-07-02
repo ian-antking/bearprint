@@ -28,108 +28,110 @@ func (m *mockWriteCloser) Close() error {
 }
 
 func TestHealthHandler(t *testing.T) {
-	app := NewApp(nil)
+	t.Run("GET /health returns 200 OK with body 'ok'", func(t *testing.T) {
+		app := NewApp(nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/health", nil)
-	w := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, "/health", nil)
+		w := httptest.NewRecorder()
 
-	app.healthHandler(w, req)
+		app.healthHandler(w, req)
 
-	resp := w.Result()
-	body := w.Body.String()
+		resp := w.Result()
+		body := w.Body.String()
 
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "ok\n", body)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		assert.Equal(t, "ok\n", body)
+	})
 }
 
-func TestPrintHandler_Success(t *testing.T) {
-	mockPrinter := &mockWriteCloser{}
+func TestPrintHandler(t *testing.T) {
+	t.Run("POST /api/v1/print prints successfully and closes printer", func(t *testing.T) {
+		mockPrinter := &mockWriteCloser{}
 
-	app := NewApp(func() (io.WriteCloser, error) {
-		return mockPrinter, nil
+		app := NewApp(func() (io.WriteCloser, error) {
+			return mockPrinter, nil
+		})
+
+		printReq := printer.PrintRequest{
+			Items: []printer.PrintItem{
+				{Type: "text", Content: "Hello world", Align: "left"},
+			},
+		}
+
+		reqBody, err := json.Marshal(printReq)
+		assert.NoError(t, err)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/print", bytes.NewReader(reqBody))
+		w := httptest.NewRecorder()
+
+		app.printHandler(w, req)
+
+		resp := w.Result()
+		body := w.Body.String()
+
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		assert.Contains(t, body, "printed")
+		assert.True(t, mockPrinter.Closed, "printer writer should be closed")
+		assert.Contains(t, mockPrinter.Written.String(), "Hello world")
 	})
 
-	printReq := printer.PrintRequest{
-		Items: []printer.PrintItem{
-			{Type: "text", Content: "Hello world", Align: "left"},
-		},
-	}
+	t.Run("GET /api/v1/print returns 405 Method Not Allowed", func(t *testing.T) {
+		app := NewApp(nil)
 
-	reqBody, err := json.Marshal(printReq)
-	assert.NoError(t, err)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/print", nil)
+		w := httptest.NewRecorder()
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/print", bytes.NewReader(reqBody))
-	w := httptest.NewRecorder()
+		app.printHandler(w, req)
 
-	app.printHandler(w, req)
+		resp := w.Result()
+		body := w.Body.String()
 
-	resp := w.Result()
-	body := w.Body.String()
-
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Contains(t, body, "printed")
-	assert.True(t, mockPrinter.Closed, "printer writer should be closed")
-
-	assert.True(t, strings.Contains(mockPrinter.Written.String(), "Hello world"), "printed output should contain 'Hello world'")
-}
-
-func TestPrintHandler_MethodNotAllowed(t *testing.T) {
-	app := NewApp(nil)
-
-	req := httptest.NewRequest(http.MethodGet, "/api/v1/print", nil)
-	w := httptest.NewRecorder()
-
-	app.printHandler(w, req)
-
-	resp := w.Result()
-	body := w.Body.String()
-
-	assert.Equal(t, http.StatusMethodNotAllowed, resp.StatusCode)
-	assert.Contains(t, body, "method not allowed")
-}
-
-func TestPrintHandler_BadRequest(t *testing.T) {
-	mockPrinter := &mockWriteCloser{}
-
-	app := NewApp(func() (io.WriteCloser, error) {
-		return mockPrinter, nil
+		assert.Equal(t, http.StatusMethodNotAllowed, resp.StatusCode)
+		assert.Contains(t, body, "method not allowed")
 	})
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/print", strings.NewReader("invalid-json"))
-	w := httptest.NewRecorder()
+	t.Run("POST /api/v1/print with invalid JSON returns 400 Bad Request", func(t *testing.T) {
+		mockPrinter := &mockWriteCloser{}
 
-	app.printHandler(w, req)
+		app := NewApp(func() (io.WriteCloser, error) {
+			return mockPrinter, nil
+		})
 
-	resp := w.Result()
-	body := w.Body.String()
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/print", strings.NewReader("invalid-json"))
+		w := httptest.NewRecorder()
 
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-	assert.Contains(t, body, "invalid request body")
-}
+		app.printHandler(w, req)
 
-func TestPrintHandler_PrinterOpenError(t *testing.T) {
-	app := NewApp(func() (io.WriteCloser, error) {
-		return nil, io.ErrClosedPipe
+		resp := w.Result()
+		body := w.Body.String()
+
+		assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+		assert.Contains(t, body, "invalid request body")
 	})
 
-	printReq := printer.PrintRequest{
-		Items: []printer.PrintItem{
-			{Type: "text", Content: "Hello", Align: "left"},
-		},
-	}
+	t.Run("POST /api/v1/print fails to open printer and returns 500 Internal Server Error", func(t *testing.T) {
+		app := NewApp(func() (io.WriteCloser, error) {
+			return nil, io.ErrClosedPipe
+		})
 
-	reqBody, err := json.Marshal(printReq)
-	assert.NoError(t, err)
+		printReq := printer.PrintRequest{
+			Items: []printer.PrintItem{
+				{Type: "text", Content: "Hello", Align: "left"},
+			},
+		}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/print", bytes.NewReader(reqBody))
-	w := httptest.NewRecorder()
+		reqBody, err := json.Marshal(printReq)
+		assert.NoError(t, err)
 
-	app.printHandler(w, req)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/print", bytes.NewReader(reqBody))
+		w := httptest.NewRecorder()
 
-	resp := w.Result()
-	body := w.Body.String()
+		app.printHandler(w, req)
 
-	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
-	assert.Contains(t, body, "failed to open printer device")
+		resp := w.Result()
+		body := w.Body.String()
+
+		assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
+		assert.Contains(t, body, "failed to open printer device")
+	})
 }
-

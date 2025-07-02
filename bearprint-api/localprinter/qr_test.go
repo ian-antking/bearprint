@@ -7,17 +7,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBuildQRCodeCmd(t *testing.T) {
+type qrCodeTest struct {
+	t *testing.T
+}
+
+func newQRCodeTest(t *testing.T) *qrCodeTest {
+	return &qrCodeTest{t: t}
+}
+
+func (qt *qrCodeTest) testBuildQRCodeCmd() {
 	data := "Hello, QR!"
 	align := printer.AlignCenter
 
 	cmds := buildQRCodeCmd(data, align, 64)
 
-	assert.NotEmpty(t, cmds, "Expected commands bytes, got empty slice")
+	assert.NotEmpty(qt.t, cmds, "Expected commands bytes, got empty slice")
 
-	assert.Equal(t, byte(0x1B), cmds[0], "First byte should be 0x1B")
-	assert.Equal(t, byte(0x61), cmds[1], "Second byte should be 0x61")
-	assert.Equal(t, byte(0x01), cmds[2], "Third byte should be 0x01 for center alignment")
+	assert.Equal(qt.t, byte(0x1B), cmds[0], "First byte should be 0x1B")
+	assert.Equal(qt.t, byte(0x61), cmds[1], "Second byte should be 0x61")
+	assert.Equal(qt.t, byte(0x01), cmds[2], "Third byte should be 0x01 for center alignment")
 
 	foundData := false
 	dataBytes := []byte(data)
@@ -27,5 +35,12 @@ func TestBuildQRCodeCmd(t *testing.T) {
 			break
 		}
 	}
-	assert.True(t, foundData, "Data string not found in QR code command bytes")
+	assert.True(qt.t, foundData, "Data string not found in QR code command bytes")
+}
+
+func TestBuildQRCodeCmd(t *testing.T) {
+	qt := newQRCodeTest(t)
+	t.Run("buildQRCodeCmd produces correct command bytes including alignment and data", func(t *testing.T) {
+		qt.testBuildQRCodeCmd()
+	})
 }

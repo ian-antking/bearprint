@@ -6,7 +6,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWrapText(t *testing.T) {
+type wrapTextTest struct {
+	t *testing.T
+}
+
+func newWrapTextTest(t *testing.T) *wrapTextTest {
+	return &wrapTextTest{t: t}
+}
+
+func (w *wrapTextTest) runTests() {
 	tests := []struct {
 		name  string
 		text  string
@@ -56,9 +64,15 @@ func TestWrapText(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := wrapText(tt.text, tt.width)
+		// Use subtests for clarity/reporting
+		w.t.Run(tt.name, func(t *testing.T) {
+			got := wrapText(tt.text, tt.width) // assuming wrapText is exported as WrapText
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestWrapText(t *testing.T) {
+	wt := newWrapTextTest(t)
+	wt.runTests()
 }
