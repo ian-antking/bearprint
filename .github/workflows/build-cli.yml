@@ -29,13 +29,13 @@ jobs:
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-        run: go build -v -o bearprint .
+        run: go build -v -o bearprint-${{ matrix.goos }}-${{ matrix.goarch }} .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: bearprint-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: ./bearprint-cli/bearprint
+          path: ./bearprint-cli/bearprint-${{ matrix.goos }}-${{ matrix.goarch }}
 
   release:
     needs: build
