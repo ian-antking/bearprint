@@ -1,0 +1,13 @@
+# lefthook.yml
+
+pre-commit:
+  parallel: true
+  commands:
+    gofmt:
+      run: gofmt -l -s .
+    govet:
+      run: go vet ./...
+    goimports:
+      run: goimports -l .
+    tests:
+      run: go test ./...
