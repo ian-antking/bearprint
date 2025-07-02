@@ -10,17 +10,8 @@ import (
 	"net/url"
 
 	"github.com/ian-antking/bear-print/bearprint-cli/config"
+	"github.com/ian-antking/bear-print/bearprint-cli/api"
 )
-type PrintItem struct {
-	Type    string `json:"type"`
-	Content string `json:"content,omitempty"`
-	Align   string `json:"align,omitempty"`
-	Count   int    `json:"count,omitempty"`
-}
-
-type PrintRequest struct {
-	Items []PrintItem `json:"items"`
-}
 
 func main() {
 	cfg, err := config.NewConfig()
@@ -37,20 +28,20 @@ func main() {
 	
 	scanner := bufio.NewScanner(os.Stdin)
 
-	printReq := PrintRequest{
-	Items: []PrintItem{},
+	printReq := api.PrintRequest{
+	Items: []api.PrintItem{},
 }
 
 for scanner.Scan() {
 	line := scanner.Text()
 
-	printReq.Items = append(printReq.Items, PrintItem{
+	printReq.Items = append(printReq.Items, api.PrintItem{
 		Type:    "text",
 		Content: line,
 	})
 }
 
-	printReq.Items = append(printReq.Items, PrintItem{Type: "cut"})
+	printReq.Items = append(printReq.Items, api.PrintItem{Type: "cut"})
 
 	data, err := json.Marshal(printReq)
 	if err != nil {
