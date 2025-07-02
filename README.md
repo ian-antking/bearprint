@@ -44,7 +44,7 @@ ssh your_pi_user@your_pi_ip
 
 # Navigate to the directory and run install
 cd /opt/bearprint-server
-sudo make install
+make install
 ```
 
 ### Installation (CLI Tool)
@@ -62,21 +62,15 @@ curl -sSL https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/
 
 After installing, you must create a configuration file for the CLI tool to specify the server's address.
 
-1. Create the directory:
-
-  ```bash
-  mkdir -p ~/.bearprint
-  ```
-
 1. Create a file named `~/.bearprint/config` with the following content:
 
-  ```ini
-  [default]
-  server_host = your_pi_ip
-  server_port = 8080
-  ```
+```ini
+[default]
+server_host = your_pi_ip
+server_port = 8080
+```
 
-  Replace `your_pi_ip` with the IP address of your Raspberry Pi.
+Replace `your_pi_ip` with the IP address of your Raspberry Pi.
 
 ### Print a test message
 
