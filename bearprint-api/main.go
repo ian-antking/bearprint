@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	_ "embed"
 	"encoding/json"
 	"fmt"
@@ -11,10 +10,6 @@ import (
 
 	"github.com/ian-antking/bear-print/bearprint-api/localprinter"
 	"github.com/ian-antking/bear-print/shared/printer"
-	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/extension"
-  "github.com/yuin/goldmark/renderer/html"
-  "github.com/yuin/goldmark-highlighting"
 )
 
 //go:embed README.md
@@ -30,74 +25,27 @@ func NewApp(printerWriterFactory func() (io.WriteCloser, error)) *App {
 
 func (a *App) rootHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
-    md := goldmark.New(
-        goldmark.WithExtensions(
-            extension.Table,
-            highlighting.NewHighlighting(
-                highlighting.WithStyle("dracula"),
-                highlighting.WithFormatOptions(),
-            ),
-        ),
-        goldmark.WithRendererOptions(
-            html.WithHardWraps(),
-            html.WithXHTML(),
-        ),
-    )
-    var buf bytes.Buffer
-    if err := md.Convert(readmeContent, &buf); err != nil {
+
+    if err := writeHTMLHeader(w); err != nil {
+        http.Error(w, "Failed to write response header", http.StatusInternalServerError)
+        return
+    }
+
+    rendered, err := renderMarkdown(readmeContent)
+    if err != nil {
         http.Error(w, "Failed to render markdown", http.StatusInternalServerError)
         return
     }
 
-	if _, err := w.Write([]byte(`
-			<!DOCTYPE html><html><head>
-			<meta charset="UTF-8">
-			<title>BearPrint API Docs</title>
-			<style>
-				body {
-					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-					margin: 4rem auto;
-					max-width: 800px;
-					padding: 0 1rem;
-					background-color: #fff;
-					color: #222;
-				}
-				pre {
-					background-color: #2d2d2d;
-					padding: 1rem;
-					overflow-x: auto;
-					border-radius: 5px;
-				}
-				table {
-					border-collapse: collapse;
-					width: 100%;
-					margin-bottom: 1rem;
-				}
-				th, td {
-					border: 1px solid #ddd;
-					padding: 0.5rem;
-					text-align: left;
-				}
-				th {
-					background-color: #f4f4f4;
-				}
-			</style>
-			</head><body>
-	`)); err != nil {
-			http.Error(w, "Failed to write response header", http.StatusInternalServerError)
-			return
-	}
+    if _, err := w.Write(rendered); err != nil {
+        http.Error(w, "Failed to write rendered markdown", http.StatusInternalServerError)
+        return
+    }
 
-	if _, err := w.Write(buf.Bytes()); err != nil {
-			http.Error(w, "Failed to write rendered markdown", http.StatusInternalServerError)
-			return
-	}
-
-	if _, err := w.Write([]byte(`</body></html>`)); err != nil {
-			http.Error(w, "Failed to write response footer", http.StatusInternalServerError)
-			return
-	}
-
+    if err := writeHTMLFooter(w); err != nil {
+        http.Error(w, "Failed to write response footer", http.StatusInternalServerError)
+        return
+    }
 }
 
 func (a *App) healthHandler(w http.ResponseWriter, r *http.Request) {
