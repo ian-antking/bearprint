@@ -22,7 +22,7 @@ BearPrint is a tiny, networked thermal printer stack — perfect for receipts, n
 Run the following command on your Raspberry Pi. It will automatically download the correct binary, install it as a `systemd` service, and set the necessary permissions.
 
 ```bash
-curl -sSL [https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-api.sh](https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-api.sh) | bash
+curl -sSL https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-api.sh | bash
 ```
 
 This single command installs and starts the server. The server will automatically run on boot.
@@ -34,7 +34,7 @@ This single command installs and starts the server. The server will automaticall
 Run the following command on any Mac or Linux machine on your network. It will automatically detect the OS and architecture, then download and install the `bearprint` binary to `~/.local/bin`.
 
 ```bash
-curl -sSL [https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-cli.sh](https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-cli.sh) | bash
+curl -sSL https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-cli.sh | bash
 ```
 
 > **Note**: On macOS, you may need to manually approve the binary after installation. Navigate to `~/.local/bin` in Finder, right-click `bearprint`, and select "Open", or run `xattr -d com.apple.quarantine ~/.local/bin/bearprint`.
