@@ -1,5 +1,3 @@
-# lefthook.yml
-
 pre-commit:
   parallel: true
   commands:
