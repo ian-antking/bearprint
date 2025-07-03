@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
 	"encoding/json"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/ian-antking/bear-print/bearprint-api/localprinter"
 	"github.com/ian-antking/bear-print/shared/printer"
+	"github.com/yuin/goldmark"
 )
 
 //go:embed README.md
@@ -24,11 +26,37 @@ func NewApp(printerWriterFactory func() (io.WriteCloser, error)) *App {
 }
 
 func (a *App) rootHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
+	var buf bytes.Buffer
+	if err := goldmark.Convert(readmeContent, &buf); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, "Error rendering README")
+		fmt.Println("markdown conversion error:", err)
+		return
+	}
 
-	if _, err := w.Write(readmeContent); err != nil {
-		fmt.Println("error writing README:", err)
+	html := fmt.Sprintf(`
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<meta charset="utf-8">
+			<title>BearPrint API Docs</title>
+			<style>
+				body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 2em; line-height: 1.6; }
+				pre { background: #f4f4f4; padding: 1em; overflow-x: auto; }
+				code { background: #eee; padding: 0.2em 0.4em; }
+				table { border-collapse: collapse; }
+				th, td { border: 1px solid #ccc; padding: 0.5em; }
+			</style>
+		</head>
+		<body>
+			%s
+		</body>
+		</html>`, buf.String())
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write([]byte(html)); err != nil {
+		fmt.Println("error writing response:", err)
 	}
 }
 
