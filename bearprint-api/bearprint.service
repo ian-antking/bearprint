@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=ian
-WorkingDirectory=/opt/bearprint
-ExecStart=/opt/bearprint/bearprint-api
+User=bearprint
+Group=bearprint
+ExecStart=/var/opt/bearprint/bearprint-api
 Restart=on-failure
 StandardOutput=journal
 StandardError=journal

@@ -6,6 +6,7 @@ REPO="bear-print"
 BINARY="bearprint-api"
 INSTALL_DIR="/var/opt/bearprint"
 SERVICE_DEST="/etc/systemd/system/bearprint.service"
+SERVICE_USER="bearprint"
 
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH_RAW=$(uname -m)
@@ -36,6 +37,13 @@ curl -fsL "$DOWNLOAD_URL" -o "/tmp/$BINARY"
 echo "Installing $BINARY to $INSTALL_DIR"
 sudo mkdir -p "$INSTALL_DIR"
 sudo install -m 755 "/tmp/$BINARY" "$INSTALL_DIR/$BINARY"
+
+echo "Creating user and setting permissions..."
+if ! id -u "$SERVICE_USER" >/dev/null 2>&1; then
+    echo "Creating system user '$SERVICE_USER'..."
+    sudo useradd -r -s /bin/false "$SERVICE_USER"
+fi
+sudo chown -R "$SERVICE_USER":"$SERVICE_USER" "$INSTALL_DIR"
 
 echo "Setting printer permissions..."
 if [ -e "/dev/usb/lp0" ]; then
