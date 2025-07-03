@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # Define a list of explicit targets instead of simple os/arch lists
         target:
           - { goos: linux, goarch: amd64, name_suffix: linux-amd64 }
           - { goos: linux, goarch: arm64, name_suffix: linux-arm64 }
@@ -42,7 +41,6 @@ jobs:
         with:
           name: bearprint-api-${{ matrix.target.name_suffix }}
           path: ./bearprint-api/bearprint-api-${{ matrix.target.name_suffix }}
-          
   release:
     needs: build
     runs-on: ubuntu-latest
