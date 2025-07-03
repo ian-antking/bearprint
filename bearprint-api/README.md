@@ -1,5 +1,17 @@
 # ʕ•ᴥ•ʔ BearPrint Server
 
+## GET /api/v1/health
+
+Returns a simple status response to indicate the server is running.
+
+### Response
+
+```json
+{ "status": "ok" }
+```
+
+200 OK
+
 ## POST /api/v1/print
 
 Send a JSON object with an `items` array describing the print job. Each item is an object with a `"type"` field and optional other fields depending on the type.

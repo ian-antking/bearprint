@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,12 +12,21 @@ import (
 	"github.com/ian-antking/bear-print/shared/printer"
 )
 
+//go:embed README.md
+var readmeContent []byte
+
 type App struct {
 	printerWriterFactory func() (io.WriteCloser, error)
 }
 
 func NewApp(printerWriterFactory func() (io.WriteCloser, error)) *App {
 	return &App{printerWriterFactory: printerWriterFactory}
+}
+
+func (a *App) rootHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write(readmeContent)
 }
 
 func (a *App) healthHandler(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +69,8 @@ func main() {
 		return os.OpenFile("/dev/usb/lp0", os.O_WRONLY, 0)
 	})
 
-	http.HandleFunc("/health", app.healthHandler)
+	http.HandleFunc("/", app.rootHandler)
+	http.HandleFunc("/api/v1/health", app.healthHandler)
 	http.HandleFunc("/api/v1/print", app.printHandler)
 
 	fmt.Println("Listening on :8080")
