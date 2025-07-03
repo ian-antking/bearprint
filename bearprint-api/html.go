@@ -45,3 +45,15 @@ func writeHTMLFooter(w http.ResponseWriter) error {
     _, err := w.Write([]byte(`</body></html>`))
     return err
 }
+
+func writeHTML(w http.ResponseWriter, content []byte) error {
+    if err := writeHTMLHeader(w); err != nil {
+        return err
+    }
+
+    if _, err := w.Write(content); err != nil {
+        return err
+    }
+
+    return writeHTMLFooter(w)
+}

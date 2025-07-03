@@ -26,25 +26,14 @@ func NewApp(printerWriterFactory func() (io.WriteCloser, error)) *App {
 func (a *App) rootHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-    if err := writeHTMLHeader(w); err != nil {
-        http.Error(w, "Failed to write response header", http.StatusInternalServerError)
-        return
-    }
-
     rendered, err := renderMarkdown(readmeContent)
     if err != nil {
         http.Error(w, "Failed to render markdown", http.StatusInternalServerError)
         return
     }
 
-    if _, err := w.Write(rendered); err != nil {
-        http.Error(w, "Failed to write rendered markdown", http.StatusInternalServerError)
-        return
-    }
-
-    if err := writeHTMLFooter(w); err != nil {
-        http.Error(w, "Failed to write response footer", http.StatusInternalServerError)
-        return
+    if err := writeHTML(w, rendered); err != nil {
+        http.Error(w, "Failed to write response", http.StatusInternalServerError)
     }
 }
 
