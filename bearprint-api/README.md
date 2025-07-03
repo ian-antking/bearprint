@@ -4,13 +4,13 @@
 
 Returns a simple status response to indicate the server is running.
 
-### Response
+### GET /api/v1/health Response
 
-```json
-{ "status": "ok" }
-```
+- 200 OK
 
-200 OK
+  ```json
+  { "status": "ok" }
+  ```
 
 ## POST /api/v1/print
 
@@ -58,22 +58,24 @@ curl -X POST -H "Content-Type: application/json" \
           ]
         }' \
     http://localhost:5000/v1/print
-Response
-200 OK
 ```
 
-```json
-{ "status": "printed" }
-```
+### POST /api/v1/print Response
 
-400 Bad Request
+- 200 Ok
 
-```json
-{ "error": "Expected JSON with an 'items' list" }
-```
+  ```json
+  { "status": "printed" }
+  ```
 
-500 Internal Server Error
+- 400 Bad Request
 
-```json
-{ "error": "<error message>" }
-```
+  ```json
+  { "error": "Expected JSON with an 'items' list" }
+  ```
+
+- 500 Internal Server Error
+
+  ```json
+  { "error": "<error message>" }
+  ```
