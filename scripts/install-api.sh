@@ -18,6 +18,9 @@ case $ARCH in
   arm64 | aarch64)
     ARCH="arm64"
     ;;
+  armv6l | armv6)
+    ARCH="armv6"
+    ;;
   *)
     echo "Unsupported architecture: $ARCH"
     exit 1
