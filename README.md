@@ -4,87 +4,73 @@ BearPrint is a tiny, networked thermal printer stack — perfect for receipts, n
 
 ## ✨ Features
 
-- 🌐 Flask-based API to expose printing over your local network
+- 🌐 API to expose printing over your local network
 - 🧾 CLI tool (`cat something.txt | bearprint`) to send jobs within your network
 
 ## 🚀 Getting Started
 
 ### Requirements
 
-- Raspberry Pi Zero (or similar) with USB thermal printer (I'm using an Xprinter 80T)
-- Python 3.9+
-- `sudo` access to `/dev/usb/lp0` or equivalent
+- Raspberry Pi Zero (or similar) with a USB thermal printer (e.g., Xprinter 80T)
+- A `systemd`-based Linux distribution (like Raspberry Pi OS)
+- `sudo` access for installation
 
-### Quickstart (Server)
+---
 
-#### 1. Clone the Repository Locally
+### Server Installation (on your Raspberry Pi)
 
-Get the project files on your local development machine.
-
-```bash
-git clone https://github.com/ian-antking/bear-print.git)
-cd bear-print/bearprint-server
-```
-
-#### 2. Deploy Files to the Pi
-
-From your local machine, run the following command. This will sync the project files to `/opt/bearprint-server/` on the Raspberry Pi.
+Run the following command on your Raspberry Pi. It will automatically download the correct binary, install it as a `systemd` service, and set the necessary permissions.
 
 ```bash
-make deploy USER=your_pi_user HOST=your_pi_ip
+curl -sSL [https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-api.sh](https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-api.sh) | bash
 ```
 
-#### 3. Install Dependencies on the Pi
+This single command installs and starts the server. The server will automatically run on boot.
 
-SSH into your Raspberry Pi and run the `install` command from the deployment directory. This will install the necessary Python packages and set up the systemd service.
+---
+
+### CLI Installation (on your other computers)
+
+Run the following command on any Mac or Linux machine on your network. It will automatically detect the OS and architecture, then download and install the `bearprint` binary to `~/.local/bin`.
 
 ```bash
-# SSH into the Pi
-ssh your_pi_user@your_pi_ip
-
-# Navigate to the directory and run install
-cd /opt/bearprint-server
-make install
+curl -sSL [https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-cli.sh](https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-cli.sh) | bash
 ```
 
-### Installation (CLI Tool)
+> **Note**: On macOS, you may need to manually approve the binary after installation. Navigate to `~/.local/bin` in Finder, right-click `bearprint`, and select "Open", or run `xattr -d com.apple.quarantine ~/.local/bin/bearprint`.
 
-Run the following command in your terminal. It will automatically detect your operating system and architecture, then download and install the `bearprint` binary to `~/.local/bin`.
+#### CLI Configuration
 
-```bash
-curl -sSL https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-cli.sh | bash
-```
-
-> **Note**: On macOS, you may need to manually approve the binary after installation. Navigate to `~/.local/bin` in Finder, right-click `bearprint`, and select "Open", Or run `xattr -d com.apple.quarantine ~/.local/bin/bearprint`.
-
-#### Configuration
-
-After installing, you must create a configuration file for the CLI tool to specify the server's address.
+After installing the CLI, you must create a configuration file to point it to your server.
 
 1. Create a file named `~/.bearprint/config` with the following content:
 
-```ini
-[default]
-server_host = your_pi_ip
-server_port = 8080
-```
+    ```ini
+    [default]
+    server_host = your_pi_ip
+    server_port = 8080
+    ```
 
 Replace `your_pi_ip` with the IP address of your Raspberry Pi.
 
-### Print a test message
+---
 
-Using the CLI:
+### Print a Test Message
+
+Once the server is running on the Pi and the CLI is configured on another machine, you can send a print job.
+
+**Using the CLI:**
 
 ```bash
 echo "Hello from BearPrint!" | bearprint
 ```
 
-Using cURL:
+**Using cURL:**
 
 ```bash
-curl -X POST http://your-pi-ip:8080/api/v1/print/text \
+curl -X POST http://your-pi-ip:8080/api/v1/print \
   -H "Content-Type: application/json" \
-  -d '{"text": "Hello from BearPrint!"}'
+  -d '{"items": [{"type": "text", "content": "Hello from cURL!"}]}'
 ```
 
 ## 🐾 Logo
