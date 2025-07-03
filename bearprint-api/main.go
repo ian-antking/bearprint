@@ -12,6 +12,8 @@ import (
 	"github.com/ian-antking/bear-print/shared/printer"
 )
 
+var version = "dev"
+
 //go:embed README.md
 var readmeContent []byte
 
@@ -22,6 +24,41 @@ type App struct {
 func NewApp(printerWriterFactory func() (io.WriteCloser, error)) *App {
 	return &App{printerWriterFactory: printerWriterFactory}
 }
+
+func (a *App) printStartupInfo() {
+    f, err := a.printerWriterFactory()
+    if err != nil {
+        return
+    }
+    defer f.Close()
+
+    p := localprinter.NewPrinter(f)
+
+    ip, err := getLocalIP()
+    if err != nil {
+        ip = "unknown"
+    }
+
+    items := []printer.PrintItem{
+        {Type: "text", Content: "BearPrint", Align: "center"},
+        {Type: "text", Content: "Version: " + version, Align: "center"},
+        {Type: "text", Content: "IP: " + ip, Align: "center"},
+        {Type: "blank", Count: 1},
+        {Type: "line"},
+        {Type: "text", Content: "API Endpoints:", Align: "left"},
+        {Type: "text", Content: "GET  /api/v1/health  - health check", Align: "left"},
+        {Type: "text", Content: "POST /api/v1/print   - print jobs", Align: "left"},
+        {Type: "line"},
+        {Type: "blank", Count: 3},
+        {Type: "cut"},
+    }
+
+    if err := p.PrintJob(items); err != nil {
+			fmt.Printf("print error: %v", err)
+		return
+	}
+}
+
 
 func (a *App) rootHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -76,6 +113,8 @@ func main() {
 	app := NewApp(func() (io.WriteCloser, error) {
 		return os.OpenFile("/dev/usb/lp0", os.O_WRONLY, 0)
 	})
+
+	app.printStartupInfo()
 
 	http.HandleFunc("/", app.rootHandler)
 	http.HandleFunc("/api/v1/health", app.healthHandler)
