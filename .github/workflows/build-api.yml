@@ -13,8 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, darwin]
-        goarch: [amd64, arm64]
+        # Define a list of explicit targets instead of simple os/arch lists
+        target:
+          - { goos: linux, goarch: amd64, name_suffix: linux-amd64 }
+          - { goos: linux, goarch: arm64, name_suffix: linux-arm64 }
+          - { goos: darwin, goarch: amd64, name_suffix: darwin-amd64 }
+          - { goos: darwin, goarch: arm64, name_suffix: darwin-arm64 }
+          - { goos: linux, goarch: arm, goarm: '6', name_suffix: linux-armv6 }
 
     steps:
       - uses: actions/checkout@v4
@@ -27,16 +32,17 @@ jobs:
       - name: Build
         working-directory: ./bearprint-api
         env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-        run: go build -v -o bearprint-api-${{ matrix.goos }}-${{ matrix.goarch }} .
+          GOOS: ${{ matrix.target.goos }}
+          GOARCH: ${{ matrix.target.goarch }}
+          GOARM: ${{ matrix.target.goarm }}
+        run: go build -v -o bearprint-api-${{ matrix.target.name_suffix }} .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bearprint-api-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: ./bearprint-api/bearprint-api-${{ matrix.goos }}-${{ matrix.goarch }}
-
+          name: bearprint-api-${{ matrix.target.name_suffix }}
+          path: ./bearprint-api/bearprint-api-${{ matrix.target.name_suffix }}
+          
   release:
     needs: build
     runs-on: ubuntu-latest
