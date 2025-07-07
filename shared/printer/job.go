@@ -23,11 +23,6 @@ type PrintItem struct {
 	Content string    `json:"content,omitempty"`
 	Align   Alignment `json:"align,omitempty"`
 	Count   int       `json:"count,omitempty"`
-
-	Bold         bool `json:"bold,omitempty"`
-	Underline    bool `json:"underline,omitempty"`
-	DoubleHeight bool `json:"doubleHeight,omitempty"`
-	DoubleWidth  bool `json:"doubleWidth,omitempty"`
 }
 
 type PrintRequest struct {

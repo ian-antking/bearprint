@@ -64,8 +64,9 @@ func (w *wrapTextTest) runTests() {
 	}
 
 	for _, tt := range tests {
+		// Use subtests for clarity/reporting
 		w.t.Run(tt.name, func(t *testing.T) {
-			got := wrapText(tt.text, tt.width)
+			got := wrapText(tt.text, tt.width) // assuming wrapText is exported as WrapText
 			assert.Equal(t, tt.want, got)
 		})
 	}
