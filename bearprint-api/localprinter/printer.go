@@ -18,7 +18,7 @@ func NewPrinter(writer io.Writer) *Printer {
 	return &Printer{
 		writer:    writer,
 		encoding:  "cp437",
-		lineWidth: 64,
+		lineWidth: 48,
 	}
 }
 

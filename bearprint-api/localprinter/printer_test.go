@@ -5,33 +5,34 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/ian-antking/bear-print/bearprint-api/localprinter"
 	"github.com/ian-antking/bear-print/shared/printer"
+	"github.com/stretchr/testify/assert"
 )
 
-type printerTest struct {
-	t   *testing.T
-	buf *bytes.Buffer
-	p   *localprinter.Printer
-}
+const (
+	lineWidth = 48
+)
 
-func newPrinterTest(t *testing.T) *printerTest {
+func newPrinterTest() (*bytes.Buffer, *localprinter.Printer) {
 	buf := &bytes.Buffer{}
 	p := localprinter.NewPrinter(buf)
-	return &printerTest{t: t, buf: buf, p: p}
+	return buf, p
 }
 
-func (pt *printerTest) testText() {
-	err := pt.p.Text("hello world", "left")
-	assert.NoError(pt.t, err)
+func TestTextMethod(t *testing.T) {
+	buf, p := newPrinterTest()
 
-	output := pt.buf.String()
-	expected := "hello world" + strings.Repeat(" ", 64-len("hello world")) + "\n"
-	assert.Equal(pt.t, expected, output)
+	err := p.Text("hello world", "left")
+	assert.NoError(t, err)
+
+	expected := "hello world" + strings.Repeat(" ", lineWidth-len("hello world")) + "\n"
+	assert.Equal(t, expected, buf.String())
 }
 
-func (pt *printerTest) testPrintJob() {
+func TestPrintJob(t *testing.T) {
+	buf, p := newPrinterTest()
+
 	job := []printer.PrintItem{
 		{Type: "text", Content: "line1", Align: "left"},
 		{Type: "blank", Count: 1},
@@ -39,25 +40,20 @@ func (pt *printerTest) testPrintJob() {
 		{Type: "cut"},
 	}
 
-	err := pt.p.PrintJob(job)
-	assert.NoError(pt.t, err)
+	err := p.PrintJob(job)
+	assert.NoError(t, err)
 
-	strOut := pt.buf.String()
+	// Build the exact expected output for a more reliable test.
+	expected := &bytes.Buffer{}
+	// 1. Text item: "line1"
+	expected.WriteString("line1" + strings.Repeat(" ", lineWidth-len("line1")) + "\n")
+	// 2. Blank item
+	expected.WriteString("\n")
+	// 3. Line item
+	expected.WriteString(strings.Repeat("-", lineWidth) + "\n")
+	// 4. Cut item
+	expected.WriteString(strings.Repeat("\n", 6))
+	expected.Write([]byte{0x1D, 0x56, 0x00})
 
-	assert.Contains(pt.t, strOut, "line1")
-	assert.Contains(pt.t, strOut, "\n\n")
-	assert.Contains(pt.t, strOut, strings.Repeat("-", 64))
-	assert.Contains(pt.t, strOut, string([]byte{0x1D, 0x56, 0x00}))
-}
-
-func TestPrinter(t *testing.T) {
-	pt := newPrinterTest(t)
-
-	t.Run("Text prints single line left aligned with padding", func(t *testing.T) {
-		pt.testText()
-	})
-
-	t.Run("PrintJob executes job with text, blank line, line, and cut commands", func(t *testing.T) {
-		pt.testPrintJob()
-	})
+	assert.Equal(t, expected.String(), buf.String())
 }
