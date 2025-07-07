@@ -48,17 +48,18 @@ sudo chown -R "$SERVICE_USER":"$SERVICE_USER" "$INSTALL_DIR"
 echo "Setting printer permissions..."
 if [ -e "/dev/usb/lp0" ]; then
     device_group=$(stat -c '%G' /dev/usb/lp0)
-    if ! groups $USER | grep -qw "$device_group"; then
-        echo "Adding $USER to $device_group group..."
-        sudo usermod -aG "$device_group" "$USER"
+    
+    if ! groups "$SERVICE_USER" | grep -qw "$device_group"; then
+        echo "Adding user '$SERVICE_USER' to group '$device_group'..."
+        sudo usermod -aG "$device_group" "$SERVICE_USER"
     fi
 else
     echo "Warning: /dev/usb/lp0 not found. Skipping group permissions."
 fi
 
 echo "Creating udev rule for printer permissions..."
-sudo tee /etc/udev/rules.d/99-usb-printer.rules > /dev/null <<EOF
-SUBSYSTEM=="usb", ATTRS{idVendor}=="0416", ATTRS{idProduct}=="5011", MODE="0666"
+sudo tee /etc/udev/rules.d/99-bearprint-printer.rules > /dev/null <<EOF
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5743", MODE="0660", GROUP="lp"
 EOF
 
 sudo udevadm control --reload-rules
