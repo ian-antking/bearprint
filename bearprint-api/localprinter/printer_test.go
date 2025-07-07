@@ -23,7 +23,8 @@ func newPrinterTest() (*bytes.Buffer, *localprinter.Printer) {
 func TestTextMethod(t *testing.T) {
 	buf, p := newPrinterTest()
 
-	err := p.Text("hello world", "left")
+	item := printer.PrintItem{Content: "hello world", Align: "left"}
+	err := p.Text(item)
 	assert.NoError(t, err)
 
 	expected := "hello world" + strings.Repeat(" ", lineWidth-len("hello world")) + "\n"
@@ -43,7 +44,6 @@ func TestPrintJob(t *testing.T) {
 	err := p.PrintJob(job)
 	assert.NoError(t, err)
 
-	// Build the exact expected output for a more reliable test.
 	expected := &bytes.Buffer{}
 	// 1. Text item: "line1"
 	expected.WriteString("line1" + strings.Repeat(" ", lineWidth-len("line1")) + "\n")

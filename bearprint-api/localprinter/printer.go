@@ -48,21 +48,21 @@ func (p *Printer) formatLine(line string, align printer.Alignment) string {
 	}
 }
 
-func (p *Printer) Text(msg string, align printer.Alignment) error {
-	lines := strings.Split(msg, "\n")
-	for _, rawLine := range lines {
-		wrapped := wrapText(rawLine, p.lineWidth)
-		if len(wrapped) == 0 {
-			wrapped = []string{""}
-		}
-		for _, line := range wrapped {
-			err := p.writeLine(p.formatLine(line, align))
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
+func (p *Printer) Text(item printer.PrintItem) error {
+  lines := strings.Split(item.Content, "\n")
+  for _, rawLine := range lines {
+    wrapped := wrapText(rawLine, p.lineWidth)
+    if len(wrapped) == 0 {
+      wrapped = []string{""}
+    }
+    for _, line := range wrapped {
+      err := p.writeLine(p.formatLine(line, item.Align))
+      if err != nil {
+        return err
+      }
+    }
+  }
+  return nil
 }
 
 func (p *Printer) BlankLine(count int) error {
@@ -83,29 +83,30 @@ func (p *Printer) printQRCode(data string, align printer.Alignment) error {
 }
 
 func (p *Printer) PrintJob(items []printer.PrintItem) error {
-	for _, item := range items {
-		switch item.Type {
-		case "text":
-			if err := p.Text(item.Content, item.Align); err != nil {
-				return err
-			}
-		case "blank":
-			if err := p.BlankLine(item.Count); err != nil {
-				return err
-			}
-		case "line":
-			if err := p.Text(strings.Repeat("-", p.lineWidth), "left"); err != nil {
-				return err
-			}
-		case "cut":
-			if err := p.Cut(); err != nil {
-				return err
-			}
-		case "qrcode":
-			if err := p.printQRCode(item.Content, item.Align); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
+  for _, item := range items {
+    switch item.Type {
+    case "text":
+      if err := p.Text(item); err != nil {
+        return err
+      }
+    case "blank":
+      if err := p.BlankLine(item.Count); err != nil {
+        return err
+      }
+    case "line":
+      lineItem := printer.PrintItem{Content: strings.Repeat("-", p.lineWidth), Align: "left"}
+      if err := p.Text(lineItem); err != nil {
+        return err
+      }
+    case "cut":
+      if err := p.Cut(); err != nil {
+        return err
+      }
+    case "qrcode":
+      if err := p.printQRCode(item.Content, item.Align); err != nil {
+        return err
+      }
+    }
+  }
+  return nil
 }
