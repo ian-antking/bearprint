@@ -41,8 +41,8 @@ func (a *App) printStartupInfo() {
 
     items := []printer.PrintItem{
         {Type: "text", Content: "BearPrint", Align: "center"},
-        {Type: "text", Content: "Version: " + version, Align: "center"},
-        {Type: "text", Content: "IP: " + ip, Align: "center"},
+        {Type: "text", Content: fmt.Sprintf("Version: %s", version), Align: "center"},
+				{Type: "text", Content: fmt.Sprintf("Server address: %s:8080", ip), Align: "center"},
         {Type: "blank", Count: 1},
         {Type: "line"},
         {Type: "text", Content: "API Endpoints:", Align: "left"},
