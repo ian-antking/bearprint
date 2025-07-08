@@ -18,6 +18,8 @@ func main() {
 	port := flag.String("port", "", "Server port")
 	q_flag := flag.Bool("q", false, "Treat input as a single QR code")
 	qrcode_flag := flag.Bool("qrcode", false, "Treat input as a single QR code")
+	nc_flag := flag.Bool("nc", false, "Do not cut the paper after printing")
+	no_cut_flag := flag.Bool("no-cut", false, "Do not cut the paper after printing")
 	flag.Parse()
 
 	cfg, err := config.NewConfig(*host, *port)
@@ -55,7 +57,9 @@ func main() {
 		}
 	}
 
-	if len(items) > 0 {
+	shouldCut := !(*nc_flag || *no_cut_flag)
+
+	if len(items) > 0 && shouldCut {
 		items = append(items, printer.PrintItem{Type: printer.Cut})
 	}
 
