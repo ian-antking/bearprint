@@ -8,6 +8,8 @@ INSTALL_DIR="/var/opt/bearprint"
 SERVICE_DEST="/etc/systemd/system/bearprint.service"
 SERVICE_USER="bearprint"
 
+VERSION="bearprint-api-v0.1.6"
+
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH_RAW=$(uname -m)
 ARCH=""
@@ -29,13 +31,15 @@ case $ARCH_RAW in
 esac
 
 FILENAME="${BINARY}-${OS}-${ARCH}"
-DOWNLOAD_URL="https://github.com/$USER_NAME/$REPO/releases/latest/download/$FILENAME"
 
-echo "Downloading $BINARY for $OS/$ARCH..."
+DOWNLOAD_URL="https://github.com/$USER_NAME/$REPO/releases/download/$VERSION/$FILENAME"
+
+echo "Downloading $BINARY version $VERSION for $OS/$ARCH..."
 curl -fsL "$DOWNLOAD_URL" -o "/tmp/$BINARY"
 
 echo "Installing $BINARY to $INSTALL_DIR"
 sudo mkdir -p "$INSTALL_DIR"
+sudo install -m 755 "/tmp/$BINARY" "$INSTALL_Д/opt/bearprint"
 sudo install -m 755 "/tmp/$BINARY" "$INSTALL_DIR/$BINARY"
 
 echo "Creating user and setting permissions..."

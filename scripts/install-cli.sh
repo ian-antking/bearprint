@@ -6,6 +6,8 @@ REPO="bear-print"
 BINARY="bearprint"
 INSTALL_DIR="$HOME/.local/bin"
 
+VERSION="bearprint-cli-v1.2.0"
+
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 
@@ -22,9 +24,9 @@ case $ARCH in
     ;;
 esac
 
-DOWNLOAD_URL="https://github.com/$USER_NAME/$REPO/releases/latest/download/${BINARY}-${OS}-${ARCH}"
+DOWNLOAD_URL="https://github.com/$USER_NAME/$REPO/releases/download/${VERSION}/${BINARY}-${OS}-${ARCH}"
 
-echo "Downloading $BINARY for $OS/$ARCH..."
+echo "Downloading $BINARY version $VERSION for $OS/$ARCH..."
 curl -sL "$DOWNLOAD_URL" -o "/tmp/$BINARY"
 
 echo "Installing $BINARY to $INSTALL_DIR"
