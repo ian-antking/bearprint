@@ -13,6 +13,8 @@ import (
 	"github.com/ian-antking/bear-print/shared/printer"
 )
 
+var version = "dev"
+
 func main() {
 	host := flag.String("host", "", "Server host")
 	port := flag.String("port", "", "Server port")
@@ -20,7 +22,14 @@ func main() {
 	qrcode_flag := flag.Bool("qrcode", false, "Treat input as a single QR code")
 	nc_flag := flag.Bool("nc", false, "Do not cut the paper after printing")
 	no_cut_flag := flag.Bool("no-cut", false, "Do not cut the paper after printing")
+	v_flag := flag.Bool("v", false, "Print version information and exit")
+	version_flag := flag.Bool("version", false, "Print version information and exit")
 	flag.Parse()
+
+	if *v_flag || *version_flag {
+		fmt.Fprintf(os.Stderr, "bearprint-cli version %s\n", version)
+		os.Exit(0)
+	}
 
 	cfg, err := config.NewConfig(*host, *port)
 	if err != nil {
