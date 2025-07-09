@@ -2,5 +2,4 @@ title: ʕ•ᴥ•ʔ BearPrint
 description: A tiny local-first print server that lets you send text from your phone or laptop to a USB-connected thermal printer — no cloud required.
 remote_theme: pages-themes/minimal@v0.2.0
 plugins:
-  - jekyll-remote-theme
-
+- jekyll-remote-theme
