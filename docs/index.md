@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 🐻 BearPrint
+title: ʕ•ᴥ•ʔ BearPrint
 ---
 
 **BearPrint** is a tiny local-first print server that lets you send text from your phone or laptop to a USB-connected thermal printer — no cloud required.
