@@ -11,9 +11,20 @@ BearPrint is a tiny, networked thermal printer stack — perfect for receipts, n
 
 ### Requirements
 
-- Raspberry Pi Zero (or similar) with a USB thermal printer (e.g., Xprinter 80T)
-- A `systemd`-based Linux distribution (like Raspberry Pi OS)
-- `sudo` access for installation
+To build a BearPrint server, you’ll need:
+
+- 🐻 **Raspberry Pi Zero (or Zero W)**  
+  - You may prefer the vanilla Pi Zero if you're connecting via Ethernet.
+- 🌐 **Waveshare Ethernet + USB Hub HAT** *(optional — only needed for wired networking)*  
+  - [Amazon UK link](https://www.amazon.co.uk/dp/B09K5DLR17)
+- 🖨️ **USB Thermal Printer** (e.g. Xprinter 80T with auto cutter)  
+  - [AliExpress link](https://a.aliexpress.com/_EQoGyOO)
+- 💾 **Micro SD card**  
+  - Doesn’t need to be large — 8GB+ is fine.
+- 🔌 **Micro-USB power cable**
+- 🧵 **Ethernet cable**
+
+> The software is designed for maker-style setups and open source tinkering. No cloud connection required.
 
 ---
 
