@@ -73,6 +73,20 @@ curl -X POST http://your-pi-ip:8080/api/v1/print \
   -d '{"items": [{"type": "text", "content": "Hello from cURL!"}]}'
 ```
 
+### iOS Shortcut (optional)
+
+Want to print directly from Safari or Notes on your iPhone or iPad? Use the BearPrint iOS Shortcut:
+
+👉 [Install the BearPrint Shortcut](https://www.icloud.com/shortcuts/243fe324569f40ed856e326eb42bfc5f)
+
+This shortcut lets you:
+
+- Send article text from Safari or Notes app share sheet
+- Send ad hoc text by invoking the shortcut directly
+- Automatically formats text with blank lines and a final cut
+
+> **Note**: After installing, tap the shortcut's "..." icon and edit it to add your BearPrint server URL.
+
 ## 🐾 Logo
 
 ```text
