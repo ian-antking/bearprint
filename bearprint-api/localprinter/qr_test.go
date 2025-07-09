@@ -3,7 +3,7 @@ package localprinter
 import (
 	"testing"
 
-	"github.com/ian-antking/bear-print/shared/printer"
+	"github.com/ian-antking/bearprint/shared/printer"
 	"github.com/stretchr/testify/assert"
 )
 

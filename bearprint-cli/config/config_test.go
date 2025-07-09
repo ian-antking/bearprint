@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ian-antking/bear-print/bearprint-cli/config"
+	"github.com/ian-antking/bearprint/bearprint-cli/config"
 	"github.com/stretchr/testify/require"
 )
 

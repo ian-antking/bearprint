@@ -1,6 +1,6 @@
 package localprinter
 
-import "github.com/ian-antking/bear-print/shared/printer"
+import "github.com/ian-antking/bearprint/shared/printer"
 
 func buildQRCodeCmd(data string, align printer.Alignment, lineWidth int) []byte {
 	alignMap := map[printer.Alignment]byte{

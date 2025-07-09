@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/ian-antking/bear-print/shared/printer"
+	"github.com/ian-antking/bearprint/shared/printer"
 )
 
 type Client struct {

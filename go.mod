@@ -1,4 +1,4 @@
-module github.com/ian-antking/bear-print
+module github.com/ian-antking/bearprint
 
 go 1.24.4
 

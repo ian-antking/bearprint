@@ -7,7 +7,7 @@
 Run the following command in your terminal. It will automatically detect your operating system and architecture, then download and install the `bearprint` binary to `~/.local/bin`.
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/ian-antking/bear-print/main/scripts/install-cli.sh | bash
+curl -sSL https://raw.githubusercontent.com/ian-antking/bearprint/main/scripts/install-cli.sh | bash
 ```
 
 > **Note**: On macOS, you may need to manually approve the binary after installation. Navigate to `~/.local/bin` in Finder, right-click `bearprint`, and select "Open", Or run `xattr -d com.apple.quarantine ~/.local/bin/bearprint`.

@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ian-antking/bear-print/bearprint-api/localprinter"
-	"github.com/ian-antking/bear-print/shared/printer"
+	"github.com/ian-antking/bearprint/bearprint-api/localprinter"
+	"github.com/ian-antking/bearprint/shared/printer"
 )
 
 var version = "dev"
@@ -26,52 +26,51 @@ func NewApp(printerWriterFactory func() (io.WriteCloser, error)) *App {
 }
 
 func (a *App) printStartupInfo() {
-    f, err := a.printerWriterFactory()
-    if err != nil {
-        return
-    }
-    defer f.Close()
+	f, err := a.printerWriterFactory()
+	if err != nil {
+		return
+	}
+	defer f.Close()
 
-    p := localprinter.NewPrinter(f)
+	p := localprinter.NewPrinter(f)
 
-    ip, err := getLocalIP()
-    if err != nil {
-        ip = "unknown"
-    }
+	ip, err := getLocalIP()
+	if err != nil {
+		ip = "unknown"
+	}
 
-    items := []printer.PrintItem{
-        {Type: "text", Content: "BearPrint", Align: "center"},
-        {Type: "text", Content: fmt.Sprintf("Version: %s", version), Align: "center"},
-				{Type: "text", Content: fmt.Sprintf("Server address: %s:8080", ip), Align: "center"},
-        {Type: "blank", Count: 1},
-        {Type: "line"},
-        {Type: "text", Content: "API Endpoints:", Align: "left"},
-        {Type: "text", Content: "GET  /api/v1/health  - health check", Align: "left"},
-        {Type: "text", Content: "POST /api/v1/print   - print jobs", Align: "left"},
-        {Type: "line"},
-        {Type: "blank", Count: 3},
-        {Type: "cut"},
-    }
+	items := []printer.PrintItem{
+		{Type: "text", Content: "BearPrint", Align: "center"},
+		{Type: "text", Content: fmt.Sprintf("Version: %s", version), Align: "center"},
+		{Type: "text", Content: fmt.Sprintf("Server address: %s:8080", ip), Align: "center"},
+		{Type: "blank", Count: 1},
+		{Type: "line"},
+		{Type: "text", Content: "API Endpoints:", Align: "left"},
+		{Type: "text", Content: "GET  /api/v1/health  - health check", Align: "left"},
+		{Type: "text", Content: "POST /api/v1/print   - print jobs", Align: "left"},
+		{Type: "line"},
+		{Type: "blank", Count: 3},
+		{Type: "cut"},
+	}
 
-    if err := p.PrintJob(items); err != nil {
-			fmt.Printf("print error: %v", err)
+	if err := p.PrintJob(items); err != nil {
+		fmt.Printf("print error: %v", err)
 		return
 	}
 }
 
-
 func (a *App) rootHandler(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-    rendered, err := renderMarkdown(readmeContent)
-    if err != nil {
-        http.Error(w, "Failed to render markdown", http.StatusInternalServerError)
-        return
-    }
+	rendered, err := renderMarkdown(readmeContent)
+	if err != nil {
+		http.Error(w, "Failed to render markdown", http.StatusInternalServerError)
+		return
+	}
 
-    if err := writeHTML(w, rendered); err != nil {
-        http.Error(w, "Failed to write response", http.StatusInternalServerError)
-    }
+	if err := writeHTML(w, rendered); err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	}
 }
 
 func (a *App) healthHandler(w http.ResponseWriter, r *http.Request) {

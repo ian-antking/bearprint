@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ian-antking/bear-print/bearprint-cli/config"
-	"github.com/ian-antking/bear-print/bearprint-cli/printservice"
-	"github.com/ian-antking/bear-print/shared/printer"
+	"github.com/ian-antking/bearprint/bearprint-cli/config"
+	"github.com/ian-antking/bearprint/bearprint-cli/printservice"
+	"github.com/ian-antking/bearprint/shared/printer"
 )
 
 var version = "dev"

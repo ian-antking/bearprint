@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ian-antking/bearprint/shared/printer"
 	"github.com/stretchr/testify/assert"
-	"github.com/ian-antking/bear-print/shared/printer"
 )
 
 type mockWriteCloser struct {

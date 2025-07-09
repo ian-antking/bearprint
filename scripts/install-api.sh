@@ -2,7 +2,7 @@
 set -e
 
 USER_NAME="ian-antking"
-REPO="bear-print"
+REPO="bearprint"
 BINARY="bearprint-api"
 INSTALL_DIR="/var/opt/bearprint"
 SERVICE_DEST="/etc/systemd/system/bearprint.service"

@@ -2,7 +2,7 @@
 set -e
 
 USER_NAME="ian-antking"
-REPO="bear-print"
+REPO="bearprint"
 BINARY="bearprint"
 INSTALL_DIR="$HOME/.local/bin"
 

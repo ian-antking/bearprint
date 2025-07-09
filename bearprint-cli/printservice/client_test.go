@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ian-antking/bear-print/shared/printer"
-	"github.com/ian-antking/bear-print/bearprint-cli/printservice"
+	"github.com/ian-antking/bearprint/bearprint-cli/printservice"
+	"github.com/ian-antking/bearprint/shared/printer"
 	"github.com/stretchr/testify/require"
 )
 
