@@ -134,4 +134,30 @@ func TestPrintHandler(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
 		assert.Contains(t, body, "failed to open printer device")
 	})
+
+	t.Run("POST /api/v1/print with empty items fails validation", func(t *testing.T) {
+	mockPrinter := &mockWriteCloser{}
+
+	app := NewApp(func() (io.WriteCloser, error) {
+		return mockPrinter, nil
+	})
+
+	printReq := printer.PrintRequest{
+		Items: []printer.PrintItem{},
+	}
+
+	reqBody, err := json.Marshal(printReq)
+	assert.NoError(t, err)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/print", bytes.NewReader(reqBody))
+	w := httptest.NewRecorder()
+
+	app.printHandler(w, req)
+
+	resp := w.Result()
+	body := w.Body.String()
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	assert.Contains(t, body, "validation error")
+})
 }

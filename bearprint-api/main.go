@@ -10,6 +10,7 @@ import (
 
 	"github.com/ian-antking/bearprint/bearprint-api/localprinter"
 	"github.com/ian-antking/bearprint/shared/printer"
+  "github.com/go-playground/validator/v10"
 )
 
 var version = "dev"
@@ -96,6 +97,15 @@ func (a *App) printHandler(w http.ResponseWriter, r *http.Request) {
 	var req printer.PrintRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if err := printer.ValidatePrintRequest(req); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+				http.Error(w, "validation error: "+errs.Error(), http.StatusBadRequest)
+		} else {
+				http.Error(w, "validation error: "+err.Error(), http.StatusBadRequest)
+		}
 		return
 	}
 
