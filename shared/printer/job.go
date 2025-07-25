@@ -19,12 +19,12 @@ const (
 )
 
 type PrintItem struct {
-	Type    ItemType  `json:"type"`
-	Content string    `json:"content,omitempty"`
-	Align   Alignment `json:"align,omitempty"`
-	Count   int       `json:"count,omitempty"`
+    Type    ItemType  `json:"type" validate:"required,itemtype"`
+    Content string    `json:"content,omitempty"`
+    Align   Alignment `json:"align,omitempty" validate:"omitempty,alignment"`
+    Count   int       `json:"count,omitempty"`
 }
 
 type PrintRequest struct {
-	Items []PrintItem `json:"items"`
+    Items []PrintItem `json:"items" validate:"required,min=1,dive"`
 }
