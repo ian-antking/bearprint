@@ -2,6 +2,7 @@ package localprinter
 
 import (
 	"testing"
+	"bytes"
 
 	"github.com/ian-antking/bearprint/shared/printer"
 	"github.com/stretchr/testify/assert"
@@ -43,4 +44,19 @@ func TestBuildQRCodeCmd(t *testing.T) {
 	t.Run("buildQRCodeCmd produces correct command bytes including alignment and data", func(t *testing.T) {
 		qt.testBuildQRCodeCmd()
 	})
+}
+
+func TestBlankLineHandlesZeroAndNegative(t *testing.T) {
+	var buf bytes.Buffer
+	printer := NewPrinter(&buf)
+
+	err := printer.BlankLine(0)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, buf.Len())
+
+	buf.Reset()
+
+	err = printer.BlankLine(-1)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, buf.Len())
 }

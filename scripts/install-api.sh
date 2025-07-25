@@ -8,7 +8,7 @@ INSTALL_DIR="/var/opt/bearprint"
 SERVICE_DEST="/etc/systemd/system/bearprint.service"
 SERVICE_USER="bearprint"
 
-VERSION="bearprint-api-v0.1.7"
+VERSION="bearprint-api-v0.1.8"
 
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH_RAW=$(uname -m)

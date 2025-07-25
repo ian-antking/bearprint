@@ -67,6 +67,9 @@ func (p *Printer) Text(item printer.PrintItem) error {
 }
 
 func (p *Printer) BlankLine(count int) error {
+	if count <= 0 {
+		count = 1
+	}
 	return p.write([]byte(strings.Repeat("\n", count)))
 }
 
