@@ -6,6 +6,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/ian-antking/bearprint/shared/printer"
+	"github.com/rainycape/unidecode"
 )
 
 type Printer struct {
@@ -56,7 +57,7 @@ func (p *Printer) Text(item printer.PrintItem) error {
 			wrapped = []string{""}
 		}
 		for _, line := range wrapped {
-			err := p.writeLine(p.formatLine(line, item.Align))
+			err := p.writeLine(p.formatLine(unidecode.Unidecode(line), item.Align))
 			if err != nil {
 				return err
 			}

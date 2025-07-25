@@ -57,3 +57,23 @@ func TestPrintJob(t *testing.T) {
 
 	assert.Equal(t, expected.String(), buf.String())
 }
+
+func TestTextNormalization(t *testing.T) {
+	buf, p := newPrinterTest()
+
+	item := printer.PrintItem{
+		Content: "Temp: 23°C\nFraction: ½\nDash: —\nQuote: “hello”\nApostrophe: ’",
+		Align:   "left",
+	}
+	err := p.Text(item)
+	assert.NoError(t, err)
+
+	expectedStr := "Temp: 23degC" + strings.Repeat(" ", lineWidth-len("Temp: 23degC")) + "\n" +
+		"Fraction: 1/2" + strings.Repeat(" ", lineWidth-len("Fraction: 1/2")) + "\n" +
+		"Dash: --" + strings.Repeat(" ", lineWidth-len("Dash: --")) + "\n" +
+		"Quote: \"hello\"" + strings.Repeat(" ", lineWidth-len("Quote: \"hello\"")) + "\n" +
+		"Apostrophe: '" + strings.Repeat(" ", lineWidth-len("Apostrophe: '")) + "\n"
+
+
+	assert.Equal(t, expectedStr, buf.String())
+}
