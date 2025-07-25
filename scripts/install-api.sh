@@ -39,7 +39,7 @@ curl -fsL "$DOWNLOAD_URL" -o "/tmp/$BINARY"
 
 echo "Installing $BINARY to $INSTALL_DIR"
 sudo mkdir -p "$INSTALL_DIR"
-sudo install -m 755 "/tmp/$BINARY" "$INSTALL_Д/opt/bearprint"
+sudo install -m 755 "/tmp/$BINARY" "$INSTALL_DIR/opt/bearprint"
 sudo install -m 755 "/tmp/$BINARY" "$INSTALL_DIR/$BINARY"
 
 echo "Creating user and setting permissions..."
