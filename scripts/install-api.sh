@@ -64,8 +64,7 @@ echo "Using printer device: $SELECTED_PRINTER"
 
 echo "Enter a name for this printer (default: bearprint):"
 read -r PRINTER_NAME
-PRINTER_NAME=${PRINTER_NAME:-bearprint}  # fallback to 'bearprint'
-
+PRINTER_NAME=${PRINTER_NAME:-bearprint}
 echo "Using printer name: $PRINTER_NAME"
 
 # ----------------------------
