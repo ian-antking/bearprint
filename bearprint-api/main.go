@@ -8,15 +8,32 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/ian-antking/bearprint/bearprint-api/localprinter"
 	"github.com/ian-antking/bearprint/shared/printer"
-  "github.com/go-playground/validator/v10"
+	"gopkg.in/ini.v1"
 )
 
 var version = "dev"
 
 //go:embed README.md
 var readmeContent []byte
+
+var configPath = "/etc/bearprint/config.ini"
+
+func getPrinterDevice() string {
+    device := "/dev/usb/lp0"
+
+    cfg, err := ini.Load(configPath)
+    if err != nil {
+        fmt.Println("⚠️  Warning: could not load /etc/bearprint/config.ini, using default", device)
+        return device
+    }
+
+    device = cfg.Section("printer").Key("device").MustString(device)
+    fmt.Println("✅ Using printer device:", device)
+    return device
+}
 
 type App struct {
 	printerWriterFactory func() (io.WriteCloser, error)
@@ -120,7 +137,7 @@ func (a *App) printHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	app := NewApp(func() (io.WriteCloser, error) {
-		return os.OpenFile("/dev/usb/lp0", os.O_WRONLY, 0)
+		return os.OpenFile(getPrinterDevice(), os.O_WRONLY, 0)
 	})
 
 	app.printStartupInfo()

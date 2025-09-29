@@ -6,11 +6,13 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/ian-antking/bearprint/shared/printer"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type mockWriteCloser struct {
@@ -160,4 +162,30 @@ func TestPrintHandler(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 	assert.Contains(t, body, "validation error")
 })
+}
+
+func TestGetPrinterDeviceFallback(t *testing.T) {
+    oldConfig := configPath
+    configPath = "/nonexistent/config.ini" // file does not exist
+    defer func() { configPath = oldConfig }()
+
+    device := getPrinterDevice()
+    require.Equal(t, "/dev/usb/lp0", device)
+}
+
+func TestGetPrinterDeviceFromConfig(t *testing.T) {
+    tmpFile, err := os.CreateTemp("", "bearprint_test_*.ini")
+    require.NoError(t, err)
+    defer os.Remove(tmpFile.Name())
+
+    _, err = tmpFile.WriteString("[printer]\ndevice=/tmp/fakeprinter\n")
+    require.NoError(t, err)
+    tmpFile.Close()
+
+    oldConfig := configPath
+    configPath = tmpFile.Name()
+    defer func() { configPath = oldConfig }()
+
+    device := getPrinterDevice()
+    require.Equal(t, "/tmp/fakeprinter", device)
 }
