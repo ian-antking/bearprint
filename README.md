@@ -1,6 +1,8 @@
 # ʕ•ᴥ•ʔ BearPrint
 
-BearPrint is a tiny, networked thermal printer stack — perfect for receipts, notes, or weird little projects. Built to run on a Raspberry Pi zero.
+BearPrint is a tiny, networked thermal printer stack — perfect for receipts, notes, or weird little projects. Built to run on a Raspberry Pi Zero.
+
+It works with **ESC/POS-compatible USB thermal printers** that expose a `/dev/usb/lpX` device on Linux.
 
 ## ✨ Features
 
@@ -17,7 +19,7 @@ To build a BearPrint server, you’ll need:
   - You may prefer the vanilla Pi Zero if you're connecting via Ethernet.
 - 🌐 **Waveshare Ethernet + USB Hub HAT** *(optional — only needed for wired networking)*  
   - [Amazon UK link](https://www.amazon.co.uk/dp/B09K5DLR17)
-- 🖨️ **USB Thermal Printer** (e.g. Xprinter 80T with auto cutter)  
+- 🖨️ **USB Thermal Printer** (ESC/POS-compatible, e.g. Xprinter 80T with auto cutter)  
   - [AliExpress link](https://a.aliexpress.com/_EQoGyOO)
 - 💾 **Micro SD card**  
   - Doesn’t need to be large — 8GB+ is fine.
@@ -25,6 +27,18 @@ To build a BearPrint server, you’ll need:
 - 🧵 **Ethernet cable**
 
 > The software is designed for maker-style setups and open source tinkering. No cloud connection required.
+
+---
+
+## 🖨️ Printer Compatibility
+
+BearPrint communicates with printers using the **ESC/POS command set** over a raw USB connection.
+
+- ✅ Works with: Most generic USB thermal receipt printers marketed as *ESC/POS-compatible* (e.g. Xprinter 80 series).  
+- ⚠️ May not work with: Printers that do not support ESC/POS, require vendor-specific drivers, or do not expose a `/dev/usb/lpX` device on Linux.  
+- 🔠 Note: Fonts, code pages, and image printing can vary slightly across brands.
+
+👉 To check, run `ls /dev/usb/lp*` after plugging in your printer. If you see a device (e.g. `/dev/usb/lp0`) and your printer manual mentions ESC/POS, it should work.
 
 ---
 
@@ -83,6 +97,9 @@ curl -X POST http://your-pi-ip:8080/api/v1/print \
   -H "Content-Type: application/json" \
   -d '{"items": [{"type": "text", "content": "Hello from cURL!"}]}'
 ```
+
+> [!NOTE]  
+> Because BearPrint sends raw ESC/POS commands, the exact appearance of the output may differ depending on your printer model (fonts, code pages, logo support, etc.).
 
 ### iOS Shortcut (optional)
 
