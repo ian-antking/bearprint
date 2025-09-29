@@ -9,7 +9,7 @@ SERVICE_DEST="/etc/systemd/system/bearprint.service"
 SERVICE_USER="bearprint"
 CONFIG_PATH="/etc/bearprint/config.ini"
 
-VERSION="bearprint-api-v0.1.8"
+VERSION="bearprint-api-v0.1.9"
 
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH_RAW=$(uname -m)
