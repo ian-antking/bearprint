@@ -49,22 +49,36 @@ elif [ ${#PRINTERS[@]} -eq 1 ]; then
     SELECTED_PRINTER="${PRINTERS[0]}"
     echo "Found one printer: $SELECTED_PRINTER"
 else
-    echo "Multiple printers detected:"
-    select p in "${PRINTERS[@]}"; do
-        if [[ -n "$p" ]]; then
-            SELECTED_PRINTER="$p"
-            break
-        else
-            echo "Invalid selection, try again."
-        fi
-    done
+    if [ -n "$CI" ]; then
+        echo "CI mode: Multiple printers detected, defaulting to first: ${PRINTERS[0]}"
+        SELECTED_PRINTER="${PRINTERS[0]}"
+    else
+        echo "Multiple printers detected:"
+        select p in "${PRINTERS[@]}"; do
+            if [[ -n "$p" ]]; then
+                SELECTED_PRINTER="$p"
+                break
+            else
+                echo "Invalid selection, try again."
+            fi
+        done
+    fi
 fi
 
 echo "Using printer device: $SELECTED_PRINTER"
 
-echo "Enter a name for this printer (default: bearprint):"
-read -r PRINTER_NAME < /dev/tty
-PRINTER_NAME=${PRINTER_NAME:-bearprint}
+# ----------------------------
+# Printer name prompt (supports CI)
+# ----------------------------
+if [ -n "$CI" ]; then
+    echo "CI mode: using default printer name 'bearprint'"
+    PRINTER_NAME="bearprint"
+else
+    echo "Enter a name for this printer (default: bearprint):"
+    read -r PRINTER_NAME < /dev/tty
+    PRINTER_NAME=${PRINTER_NAME:-bearprint}
+fi
+
 echo "Using printer name: $PRINTER_NAME"
 
 # ----------------------------
