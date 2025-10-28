@@ -22,9 +22,7 @@ jobs:
         run: chmod +x scripts/*.sh
 
       - name: Install BearPrint (test install)
-        run: |
-          export CI=true
-          sudo ./scripts/install-api.sh
+        run: sudo ./scripts/install-api.sh
 
       - name: Run API Smoke Test
         run: ./scripts/api.smoke.test.sh

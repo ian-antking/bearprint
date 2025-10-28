@@ -68,15 +68,17 @@ fi
 echo "Using printer device: $SELECTED_PRINTER"
 
 # ----------------------------
-# Printer name prompt (supports CI)
+# Printer name prompt
 # ----------------------------
-if [ -n "$CI" ]; then
-    echo "CI mode: using default printer name 'bearprint'"
-    PRINTER_NAME="bearprint"
-else
+if [ -t 0 ]; then
+    # Interactive install
     echo "Enter a name for this printer (default: bearprint):"
-    read -r PRINTER_NAME < /dev/tty
+    read -r PRINTER_NAME
     PRINTER_NAME=${PRINTER_NAME:-bearprint}
+else
+    # Non-interactive install (CI, automation)
+    echo "Non-interactive mode: using default printer name 'bearprint'"
+    PRINTER_NAME="bearprint"
 fi
 
 echo "Using printer name: $PRINTER_NAME"
