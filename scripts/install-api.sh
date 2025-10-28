@@ -85,16 +85,34 @@ sudo chmod 644 "$CONFIG_PATH"
 # ----------------------------
 FILENAME="${BINARY}-${OS}-${ARCH}"
 DOWNLOAD_URL="https://github.com/$USER_NAME/$REPO/releases/download/$VERSION/$FILENAME"
+TMP_BINARY="/tmp/$BINARY"
+INSTALL_TMP="$INSTALL_DIR/$BINARY.tmp"
 
 echo "Downloading $BINARY version $VERSION for $OS/$ARCH..."
-curl -fsL "$DOWNLOAD_URL" -o "/tmp/$BINARY"
+curl -fsL "$DOWNLOAD_URL" -o "$TMP_BINARY"
+
+# Safety check: ensure binary is non-empty
+if [ ! -s "$TMP_BINARY" ]; then
+    echo "❌ Download failed or binary is empty, aborting installation."
+    echo "Attempted URL: $DOWNLOAD_URL"
+    head -n 5 "$TMP_BINARY"
+    rm -f "$TMP_BINARY"
+    exit 1
+fi
 
 echo "Installing $BINARY to $INSTALL_DIR..."
 sudo mkdir -p "$INSTALL_DIR"
-sudo install -m 755 "/tmp/$BINARY" "$INSTALL_DIR/$BINARY"
-rm "/tmp/$BINARY"
 
-sudo chown -R "$SERVICE_USER":"$SERVICE_USER" "$INSTALL_DIR"
+# Copy to temporary file in install dir first
+sudo cp "$TMP_BINARY" "$INSTALL_TMP"
+sudo chmod 755 "$INSTALL_TMP"
+sudo chown "$SERVICE_USER":"$SERVICE_USER" "$INSTALL_TMP"
+
+# Atomically replace old binary
+sudo mv "$INSTALL_TMP" "$INSTALL_DIR/$BINARY"
+
+# Clean up temporary download
+rm -f "$TMP_BINARY"
 
 # ----------------------------
 # Printer permissions
@@ -123,7 +141,19 @@ sudo udevadm trigger
 # ----------------------------
 echo "Downloading service file to $SERVICE_DEST..."
 SERVICE_URL="https://raw.githubusercontent.com/$USER_NAME/$REPO/main/bearprint-api/bearprint.service"
-sudo curl -fsL "$SERVICE_URL" -o "$SERVICE_DEST"
+TEMP_SERVICE="/tmp/bearprint.service"
+
+sudo curl -fsL "$SERVICE_URL" -o "$TEMP_SERVICE"
+
+# Safety check: ensure service file is non-empty
+if [ ! -s "$TEMP_SERVICE" ]; then
+    echo "❌ Service file download failed or file is empty, aborting installation."
+    rm -f "$TEMP_SERVICE"
+    exit 1
+fi
+
+# Move valid service file into place
+sudo mv "$TEMP_SERVICE" "$SERVICE_DEST"
 
 echo "Reloading systemd daemon and enabling service..."
 sudo systemctl daemon-reload
