@@ -1,0 +1,33 @@
+name: BearPrint CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why are you manually running the CI?"
+        required: false
+        default: "Manual test run"
+
+jobs:
+  install-and-smoking-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Install BearPrint (test install)
+        run: sudo ./scripts/install-api.sh
+
+      - name: Run API Smoke Test
+        run: ./scripts/api.smoke.test.sh
+
+      - name: Show manual input reason (if applicable)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "CI manually triggered: ${{ github.event.inputs.reason }}"
