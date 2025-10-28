@@ -20,4 +20,3 @@ jobs:
 
       - name: Run API Smoke Test
         run: ./scripts/api.smoke.test.sh
-
