@@ -1,0 +1,25 @@
+# tunnel-client profile for the BearPrint MCP server.
+# Copy to ~/.config/tunnel-client/bearprint.yaml and fill in the placeholders.
+# The API key is NOT stored here; it comes from CONTROL_PLANE_API_KEY in the
+# service's environment (see bearprint-mcp-tunnel.service).
+config_version: 1
+control_plane:
+  base_url: "https://api.openai.com"
+  # The organization that owns the tunnel and the runtime key.
+  organization_id: "<ORG_ID>"
+  tunnel_id: "<TUNNEL_ID>"
+  api_key: "env:CONTROL_PLANE_API_KEY"
+health:
+  # Loopback only; nothing is exposed to the network.
+  listen_addr: "127.0.0.1:8790"
+admin_ui:
+  open_browser: false
+log:
+  level: info
+  format: json
+mcp:
+  commands:
+    - channel: main
+      # Absolute path to server.py in your checkout. BEARPRINT_URL is read from
+      # the environment (default http://localhost:8080).
+      command: "/usr/bin/python3 /path/to/bearprint/bearprint-mcp/server.py"
